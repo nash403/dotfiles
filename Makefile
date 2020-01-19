@@ -30,7 +30,7 @@ sudo:
 	sudo -v
 	while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
 
-packages: mas brew-packages node-packages gems antigen
+packages: antigen mas brew-packages node-packages gems
 
 link: stow-$(OS)
 	for FILE in $$(\ls -A run); do if [ -f $(HOME)/$$FILE -a ! -h $(HOME)/$$FILE ]; then mv -v $(HOME)/$$FILE{,.bak}; fi; done
@@ -51,8 +51,7 @@ git: brew
 
 npm:
 	curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.2/install.sh | bash
-	command -v nvm
-	# . $(NVM_DIR)/nvm.sh; nvm install --lts
+	. $(NVM_DIR)/nvm.sh; nvm install --lts
 
 ruby: brew
 	brew install ruby
@@ -64,14 +63,10 @@ brew-packages: brew
 	brew bundle --file=$(DOTFILES_DIR)/Brewfile
 
 node-packages: npm
-	# . $(NVM_DIR)/nvm.sh; npm install -g $(shell cat npmfile)
-	# npm install -g $(shell cat npmfile)
-	$(shell bin/is-supported bin/is-executable npm npm no-npm)
+	. $(NVM_DIR)/nvm.sh; npm install -g $(shell cat npmfile)
 
 gems: ruby
-	# export PATH="/usr/local/opt/ruby/bin:$PATH"; gem install $(shell cat Gemfile)
-	# gem install $(shell cat Gemfile)
-	$(shell bin/is-supported bin/is-executable gem gem no-gem)
+	export PATH="/usr/local/opt/ruby/bin:$PATH"; gem install $(shell cat Gemfile)
 
 antigen:
 	curl -L git.io/antigen > $(XDG_CONFIG_HOME)/antigen.zsh
