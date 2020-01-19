@@ -74,13 +74,16 @@ You can put your custom settings, such as Git credentials in the `system/.custom
 ## Additional resources & Credits
 
 Where I mainly ~~stole ideas~~ got inspiration from:
-  - [Mathias Bynens' dotfiles](https://github.com/mathiasbynens/dotfiles)
   - [webpro's dotfiles](https://github.com/webpro/dotfiles)
   - [Dennis Muensterer's dotfiles](https://github.com/dnnsmnstrr/dotfiles)
+  - and of course [Mathias Bynens' dotfiles](https://github.com/mathiasbynens/dotfiles)
 
 Other resources:
   - [Homebrew](https://brew.sh)
+  - [Antigen](http://antigen.sharats.me/)
+  - [Mac App Store CLI](https://github.com/mas-cli/mas)
   - [Spaceship prompt](https://github.com/denysdovhan/spaceship-prompt)
+  - [NVM](https://github.com/nvm-sh/nvm)
 
 Many thanks to the [dotfiles community](https://dotfiles.github.io).
 
