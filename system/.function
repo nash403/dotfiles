@@ -1,0 +1,87 @@
+
+
+# Calculator
+
+calc() {
+  echo "$*" | bc -l;
+}
+
+# Weather
+
+meteo() {
+  local LOCALE=$(echo ${LANG:-en} | cut -c1-2)
+  if [ $# -eq 0 ]; then
+    local LOCATION=$(curl -s ipinfo.io/loc)
+  else
+    local LOCATION=$1
+  fi
+  curl -s "$LOCALE.wttr.in/$LOCATION"
+}
+
+# Markdown
+
+md() {
+  pandoc $1 | lynx -stdin -dump
+}
+
+# Open man page as PDF
+
+manpdf() {
+  man -t "$1" | open -f -a /Applications/Preview.app/
+}
+
+function shells {
+  echo "Default Shell:"
+  echo "$SHELL"
+  echo "Current Shell:"
+  echo "$0"
+  echo "Available Shells:"
+  echo "
+  /bin/bash
+  /bin/csh
+  /bin/fish
+  /bin/ksh
+  /bin/sh
+  /bin/tcsh
+  /bin/zsh
+  "
+}
+
+# Git clone and cd into new directory
+function gcd() {
+  git clone "$1" && cd "$(basename "$1" .git)" || return
+}
+
+# Git clone from clipboard
+function gcb(){
+  git clone "$(pbpaste)"
+}
+
+function myinfo () {
+  printf "CPU: "
+  cat /proc/cpuinfo | grep "model name" | head -1 | awk '{ for (i = 4; i <= NF; i++) printf "%s ", $i }'
+  printf "\n"
+
+  cat /etc/issue | awk '{ printf "OS: %s %s %s %s | " , $1 , $2 , $3 , $4 }'
+  uname -a | awk '{ printf "Kernel: %s " , $3 }'
+  uname -m | awk '{ printf "%s | " , $1 }'
+  kded4 --version | grep "KDE Development Platform" | awk '{ printf "KDE: %s", $4 }'
+  printf "\n"
+  uptime | awk '{ printf "Uptime: %s %s %s", $3, $4, $5 }' | sed 's/,//g'
+  printf "\n"
+  cputemp | head -1 | awk '{ printf "%s %s %s\n", $1, $2, $3 }'
+  cputemp | tail -1 | awk '{ printf "%s %s %s\n", $1, $2, $3 }'
+  #cputemp | awk '{ printf "%s %s", $1 $2 }'
+}
+
+function myuptime () {
+  uptime | awk '{ print "Uptime:", $3, $4, $5 }' | sed 's/,//g'
+  return;
+}
+
+camerausedby() {
+	echo "Checking to see who is using the iSight camera… 📷"
+	usedby=$(lsof | grep -w "AppleCamera\|USBVDC\|iSight" | awk '{printf $2"\n"}' | xargs ps)
+	echo -e "Recent camera uses:\n$usedby"
+}
+
