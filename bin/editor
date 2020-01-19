@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+
+case "$1" in
+	*_EDITMSG|*MERGE_MSG|*_TAGMSG )
+		code -a "$1"
+		;;
+	*.md )
+		mdless "$1"
+		;;
+	*.txt )
+		nano "$1"
+		;;
+	* )
+		code -n "$1"
+		;;
+esac
