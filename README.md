@@ -30,7 +30,7 @@ This will clone (using `git`), or download (using `curl` or `wget`), this repo t
     git clone https://github.com/nash403/dotfiles.git ~/projects/dotfiles
     ln -s /the/full/path/to/where/you/cloned/dotfiles ~/.dotfiles
 
-Use the [Makefile](./Makefile) to install everything [listed above](#overview), and symlink [runcom](./runcom) and [config](./config) (using [stow](https://www.gnu.org/software/stow/)):
+Use the [Makefile](./Makefile) to install everything [listed above](#overview), and symlink [run](./run) and [config](./config) (using [stow](https://www.gnu.org/software/stow/)):
 
     cd ~/.dotfiles
     make
