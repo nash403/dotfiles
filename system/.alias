@@ -1,0 +1,145 @@
+# My aliases
+alias gmojic='gitmoji -c'
+alias c='clear'
+alias listaliases="alias | sed 's/=.*//'"
+alias listfunctions="declare -f | grep '^[a-z].* ()' | sed 's/{$//'" # show non _prefixed functions
+
+# Directories
+alias db="cd ~/Dropbox"
+alias dl="cd ~/Downloads"
+alias dt="cd ~/Desktop"
+alias dev="cd ~/projects"
+alias work="cd ~/work"
+alias docs="cd ~/Documents"
+alias dotf="cd ~/.dotfiles"
+
+# Get macOS Software Updates, and update installed Ruby gems, Homebrew, npm, and their installed packages
+alias update='sudo softwareupdate -i -a; brew update; brew upgrade; brew cleanup; npm install npm -g; npm update -g; sudo gem update --system; sudo gem update; sudo gem cleanup'
+
+# Trim new lines and copy to clipboard
+alias copy="tr -d '\n' | pbcopy"
+
+# Recursively delete `.DS_Store` files
+alias cleanup="find . -type f -name '*.DS_Store' -ls -delete"
+
+# ls, the common ones I use a lot shortened for rapid fire usage
+alias l='ls -lFh'     #size,show type,human readable
+alias la='ls -lAFh'   #long list,show almost all,show type,human readable
+alias lr='ls -tRFh'   #sorted by date,recursive,show type,human readable
+alias lt='ls -ltFh'   #long list,sorted by date,show type,human readable
+alias ldot='ls -ld .*'
+alias ldotname='ls -ld1Fcart .*'
+alias laname='ls -1Fcart'
+alias lname='ls -1Fcrt'
+
+alias t='tail'
+alias hd='head'
+
+alias rmi='rm -i'
+alias rmd='rm -r'
+alias rmdf='rm -rf'
+alias cpi='cp -i'
+alias mvi='mv -i'
+
+# NPM aliases
+alias ni='npm install'
+alias nid='npm install --save-dev'
+alias nis='npm install --save'
+alias nr='npm run'
+alias ns='npm start'
+alias nig='npm install -g'
+alias nlsg="npm list -g --depth=0 2>/dev/null"
+alias nls="npm list --depth=0 2>/dev/null"
+alias yarnglobalpkg='cat $(yarn global dir)/package.json'
+
+# More git aliases
+alias ggpullr='ggpull --rebase'
+alias garch='git archive HEAD --format=zip'
+alias gta='git tag'
+alias gball='gb -a -vv'
+alias gchangelog="git log $(git describe --tags --abbrev=0)..HEAD --oneline | cut -f 2-"
+
+alias s="subl ."
+alias copy_ssh="cat ~/.ssh/id_rsa.pub | pbcopy && echo 'Copied to clipboard.'"
+
+alias pyserver='open http://localhost:8000 && python -m SimpleHTTPServer'
+alias whois="whois -h whois-servers.net"
+# IP addresses
+alias ip="dig +short myip.opendns.com @resolver1.opendns.com"
+alias localip="ipconfig getifaddr en0"
+
+# Show active network interfaces
+alias ifactive="ifconfig | pcregrep -M -o '^[^\t:]+:([^\n]|\n\t)*status: active'"
+
+# View HTTP traffic
+alias sniff="sudo ngrep -d 'en1' -t '^(GET|POST) ' 'tcp and port 80'"
+alias httpdump="sudo tcpdump -i en1 -n -s 0 -w - | grep -a -o -E \"Host\: .*|GET \/.*\""
+
+alias week='date +%V'
+
+# Show/hide hidden files in Finder
+alias show="defaults write com.apple.finder AppleShowAllFiles -bool true && killall Finder"
+alias hide="defaults write com.apple.finder AppleShowAllFiles -bool false && killall Finder"
+
+# Hide/show all desktop icons (useful when presenting)
+alias hidedesktop="defaults write com.apple.finder CreateDesktop -bool false && killall Finder"
+alias showdesktop="defaults write com.apple.finder CreateDesktop -bool true && killall Finder"
+
+# Disable Spotlight
+alias spotoff="sudo mdutil -a -i off"
+# Enable Spotlight
+alias spoton="sudo mdutil -a -i on"
+
+# URL-encode strings
+alias urlencode='python -c "import sys, urllib as ul; print ul.quote_plus(sys.argv[1]);"'
+
+## Media
+alias youtube='cd ~/Desktop; $(command -v youtube-dl)'
+alias youtube-mp3='$(command -v youtube-dl) -x --audio-format mp3'
+
+# Intuitive map function
+# For example, to list all directories that contain a certain file:
+# find . -name .gitattributes | map dirname
+alias map="xargs -n1"
+
+# One of @janmoesen’s ProTip™s
+for method in GET HEAD POST PUT DELETE TRACE OPTIONS; do
+	alias "${method}"="lwp-request -m '${method}'"
+done
+
+# Stuff I never really use but cannot delete either because of http://xkcd.com/530/
+alias stfu="osascript -e 'set volume output muted true'"
+alias pumpitup="osascript -e 'set volume output volume 100'"
+
+# Lock the screen (when going AFK)
+alias afk="/System/Library/CoreServices/Menu\ Extras/User.menu/Contents/Resources/CGSession -suspend"
+alias screensaver="open /System/Library/CoreServices/ScreenSaverEngine.app"
+
+# Print each PATH entry on a separate line
+alias paths='echo -e ${PATH//:/\\n}'
+
+# quicklook from command line
+alias ql="qlmanage -p &>/dev/null"
+
+# Make executable
+alias makex="chmod a+x"
+
+alias reboot='sudo shutdown -r now'
+alias shutdown='sudo shutdown -h now'
+
+# info
+alias displays="system_profiler SPDisplaysDataType"
+alias cpuinfo="sysctl -n machdep.cpu.brand_string"
+alias cpu='top -o cpu'   # CPU
+alias mem='top -o rsize' # Memory
+
+alias qr="qrcode-terminal"
+
+# LoLs
+
+alias shrug="printf '¯\_(ツ)_/¯' | pbcopy"
+alias flipt="printf '(╯°□°)╯︵ ┻━┻' | pbcopy"
+alias fight="printf '(ง'̀-'́)ง' | pbcopy"
+alias nomnom='killall'
+alias cowcat='fortune | cowsay | lolcat'
+alias devcat='devquote | cowsay | lolcat'

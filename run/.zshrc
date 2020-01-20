@@ -175,4 +175,4 @@ load-nvmrc
 alias zshconfig="nano ~/.zshrc"
 # alias ohmyzsh="nano ~/.oh-my-zsh"
 # alias theme="echo $RANDOM_THEME"
-alias reload!='. ~/.zshrc'
+alias reload!='. ~/.zshrc; echo "Reloaded .zshrc..."'
