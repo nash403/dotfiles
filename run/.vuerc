@@ -1,0 +1,40 @@
+{
+  "packageManager": "yarn",
+  "presets": {
+    "vue-soup": {
+      "useConfigFiles": true,
+      "plugins": {
+        "@vue/cli-plugin-babel": {},
+        "@vue/cli-plugin-pwa": {},
+        "@vue/cli-plugin-eslint": {
+          "config": "prettier",
+          "lintOn": [
+            "save",
+            "commit"
+          ]
+        },
+        "@vue/cli-plugin-unit-jest": {},
+        "@vue/cli-plugin-e2e-cypress": {}
+      },
+      "router": true,
+      "vuex": true,
+      "cssPreprocessor": "sass"
+    },
+    "noop": {
+      "useConfigFiles": true,
+      "plugins": {
+        "@vue/cli-plugin-babel": {}
+      }
+    },
+    "noop-sass": {
+      "useConfigFiles": true,
+      "plugins": {
+        "@vue/cli-plugin-babel": {}
+      },
+      "cssPreprocessor": "sass"
+    }
+  },
+  "useTaobaoRegistry": false,
+  "latestVersion": "3.8.2",
+  "lastChecked": 1558991560786
+}
