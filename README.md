@@ -14,6 +14,7 @@ It is intended to target macOS systems with zsh shell.
 - Latest Ruby (packages: [Gemfile](./Gemfile))
 - Latest Git, Python 3, wget, ...
 - [Mackup](https://github.com/lra/mackup) (sync application settings)
+- useful [aliases](./system/.alias))
 
 ## On fresh install...
 
@@ -39,8 +40,6 @@ Use the [Makefile](./Makefile) to install everything [listed above](#overview), 
     cd ~/.dotfiles
     make
 
-## Post-install
-
 ### Specify the `$PATH`
 
 If `~/.path` exists, it will be sourced along with the other files.
@@ -50,6 +49,13 @@ Here’s an example `~/.path` file that adds `/usr/local/bin` to the `$PATH`:
 ```bash
 export PATH="/usr/local/bin:$PATH"
 ```
+
+### Customize/extend
+
+You can put your custom settings, such as Git credentials in the `system/.custom` file which will be sourced from `.zshrc` automatically. This file is in `.gitignore`.
+
+
+## Post-install
 
 ### Mackup
 
@@ -66,10 +72,6 @@ When setting up a new Mac, you may want to set some sensible macOS defaults:
 ```
 
 Definitely go through and check each [setting](./run/.macos) before running, this can change some major things!
-
-## Customize/extend
-
-You can put your custom settings, such as Git credentials in the `system/.custom` file which will be sourced from `.zshrc` automatically. This file is in `.gitignore`.
 
 ## Additional resources & Credits
 
