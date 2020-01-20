@@ -1,13 +1,13 @@
 DOTFILES_DIR := $(dir $(realpath $(firstword $(MAKEFILE_LIST))))
+export STOW_DIR := $(DOTFILES_DIR)
+export XDG_CONFIG_HOME := $(HOME)/.config
 OS := $(shell bin/is-supported bin/is-macos macos linux)
 PATH := $(DOTFILES_DIR)/bin:$(PATH)
-NVM_DIR := $(HOME)/.nvm
-export XDG_CONFIG_HOME := $(HOME)/.config
-export STOW_DIR := $(DOTFILES_DIR)
+NVM_DIR := $(HOME)/.config/nvm
 
 .PHONY: test
 
-all: $(OS)
+all: workdirs $(OS)
 
 macos: sudo core-macos packages link
 
@@ -30,7 +30,7 @@ sudo:
 	sudo -v
 	while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
 
-packages: antigen mas brew-packages node-packages gems
+packages: mas brew-packages node-packages gems ohmyzsh
 
 link: stow-$(OS)
 	for FILE in $$(\ls -A run); do if [ -f $(HOME)/$$FILE -a ! -h $(HOME)/$$FILE ]; then mv -v $(HOME)/$$FILE{,.bak}; fi; done
@@ -60,13 +60,22 @@ mas:
 	brew install mas
 
 brew-packages: brew
-	brew bundle --file=$(DOTFILES_DIR)/Brewfile
+	-brew bundle --file=$(DOTFILES_DIR)/Brewfile
+	# Install brews that cannot be installed via a Brewfile (see https://github.com/Homebrew/homebrew-bundle/#note)
+	brew cask install https://raw.githubusercontent.com/popcorn-official/popcorn-desktop/development/casks/popcorn-time.rb
 
 node-packages: npm
 	. $(NVM_DIR)/nvm.sh; npm install -g $(shell cat npmfile)
 
 gems: ruby
-	export PATH="/usr/local/opt/ruby/bin:$PATH"; gem install $(shell cat Gemfile)
+	export PATH="/usr/local/opt/ruby/bin:$(PATH)"; gem install $(shell cat Gemfile)
 
-antigen:
-	curl -L git.io/antigen > $(XDG_CONFIG_HOME)/antigen.zsh
+ohmyzsh:
+	-curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh | bash
+	git clone https://github.com/denysdovhan/spaceship-prompt.git "$(XDG_CONFIG_HOME)/oh-my-zsh/themes/spaceship-prompt"
+	mkdir -p "$(HOME)/.oh-my-zsh/themes"; ln -s "$(XDG_CONFIG_HOME)/oh-my-zsh/themes/spaceship-prompt/spaceship.zsh-theme" "$(HOME)/.oh-my-zsh/themes"
+
+workdirs:
+	mkdir -p "$(XDG_CONFIG_HOME)"
+	mkdir -p "$(HOME)/projects"
+	mkdir -p "$(HOME)/work"

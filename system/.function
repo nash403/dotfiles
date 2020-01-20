@@ -20,7 +20,7 @@ meteo() {
 
 # Markdown
 
-md() {
+markdown() {
   pandoc $1 | lynx -stdin -dump
 }
 

@@ -2,7 +2,7 @@ export XDG_CONFIG_HOME="$HOME/.config"
 export EDITOR="$HOME/.dotfiles/bin/editor"
 
 # nvm
-export NVM_DIR="$HOME/.nvm"
+export NVM_DIR="$XDG_CONFIG_HOME/nvm"
 
 # Android
 export ANDROID_HOME=$HOME/Library/Android/sdk
@@ -22,10 +22,6 @@ export HISTSIZE=32768;
 export HISTFILESIZE="${HISTSIZE}";
 export SAVEHIST=4096
 export HISTCONTROL=ignoredups:erasedups
-
-# Prefer US English and use UTF-8
-export LC_ALL="en_US.UTF-8"
-export LANG="en_US"
 
 # Highlight section titles in man pages
 export LESS_TERMCAP_md="${yellow}";
