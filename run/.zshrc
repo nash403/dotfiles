@@ -173,6 +173,7 @@ load-nvmrc
 # export MANPATH="/usr/local/man:$MANPATH"
 
 alias zshconfig="nano ~/.zshrc"
-# alias ohmyzsh="nano ~/.oh-my-zsh"
-# alias theme="echo $RANDOM_THEME"
+alias theme="echo $RANDOM_THEME"
 alias reload!='. ~/.zshrc; echo "Reloaded .zshrc..."'
+
+source /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh

@@ -1,5 +1,6 @@
 export XDG_CONFIG_HOME="$HOME/.config"
 export EDITOR="$HOME/.dotfiles/bin/editor"
+export ZSH_HIGHLIGHT_HIGHLIGHTERS_DIR=/usr/local/share/zsh-syntax-highlighting/highlighters
 
 # nvm
 export NVM_DIR="$XDG_CONFIG_HOME/nvm"

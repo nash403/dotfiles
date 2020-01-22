@@ -18,5 +18,6 @@ Thumbs.db
 
 node_modules/
 *.lock
+*.lock.json
 
 system/.custom

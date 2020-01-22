@@ -39,6 +39,7 @@ brew "wifi-password"
 brew "yarn"
 brew "yarn-completion"
 brew "youtube-dl"
+bre "zsh-syntax-highlighting"
 
 cask "adapter"
 cask "adobe-acrobat-reader"
