@@ -177,3 +177,9 @@ alias theme="echo $RANDOM_THEME"
 alias reload!='. ~/.zshrc; echo "Reloaded .zshrc..."'
 
 source /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+
+# The next line updates PATH for the Google Cloud SDK.
+if [ -f '/Users/nash/google-cloud-sdk/path.zsh.inc' ]; then . '/Users/nash/google-cloud-sdk/path.zsh.inc'; fi
+
+# The next line enables shell command completion for gcloud.
+if [ -f '/Users/nash/google-cloud-sdk/completion.zsh.inc' ]; then . '/Users/nash/google-cloud-sdk/completion.zsh.inc'; fi
