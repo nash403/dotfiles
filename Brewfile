@@ -36,8 +36,6 @@ brew "tldr"
 brew "tree"
 brew "wget"
 brew "wifi-password"
-brew "yarn-completion"
-brew "yarn"
 brew "youtube-dl"
 brew "zsh-syntax-highlighting"
 
