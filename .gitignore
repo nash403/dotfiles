@@ -13,8 +13,8 @@ Thumbs.db
 .Spotlight-V100
 .Trashes
 
-# Local Brewfile
-# Brewfile
+# IDE
+.vscode
 
 node_modules/
 *.lock
