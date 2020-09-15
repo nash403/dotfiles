@@ -3,6 +3,7 @@ export EDITOR="$HOME/.dotfiles/bin/editor"
 export GIT_EDITOR="/usr/local/bin/nano"
 export ZSH_HIGHLIGHT_HIGHLIGHTERS_DIR=/usr/local/share/zsh-syntax-highlighting/highlighters
 export LC_ALL=en_US.UTF-8
+# export JAVA_HOME=`/usr/libexec/java_home -v 14`
 
 # nvm
 export NVM_DIR="$XDG_CONFIG_HOME/nvm"
