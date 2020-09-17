@@ -5,6 +5,7 @@ alias listaliases="alias | sed 's/=.*//'"
 alias listfunctions="declare -f | grep '^[a-z].* ()' | sed 's/{$//'" # show non _prefixed functions
 alias nmodulessize="find . -name 'node_modules' -type d -prune -print | xargs du -chs"
 alias nmodulesrm="find . -name 'node_modules' -type d -prune -print -exec rm -rf '{}' \;"
+alias gitrm="find . -name '.git' -type d -prune -print -exec rm -rf '{}' \;"
 
 # Directories
 alias db="cd ~/Dropbox"
