@@ -54,6 +54,8 @@ SPACESHIP_TIME_SHOW="true"
 # much, much faster.
 # DISABLE_UNTRACKED_FILES_DIRTY="true"
 
+ZSH_DISABLE_COMPFIX="true"
+
 # Uncomment the following line if you want to change the command execution time
 # stamp shown in the history command output.
 # You can set one of the optional three formats:
@@ -123,7 +125,7 @@ else
   return
 fi
 
-DOTFILES_DIR="$(dirname "$CURRENT_SCRIPT")/$DOTFILES_DIR"
+# DOTFILES_DIR="$(dirname "$CURRENT_SCRIPT")/$DOTFILES_DIR" # Why did I add this line again???
 
 # Make utilities available
 
