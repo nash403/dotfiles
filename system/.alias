@@ -7,6 +7,12 @@ alias nmodulessize="find . -name 'node_modules' -type d -prune -print | xargs du
 alias nmodulesrm="find . -name 'node_modules' -type d -prune -print -exec rm -rf '{}' \;"
 alias gitrm="find . -name '.git' -type d -prune -print -exec rm -rf '{}' \;"
 
+alias setproxy='export http_proxy="http://proxy.fr.auchan.com:80" && export https_proxy="http://proxy.fr.auchan.com:80" && npm config set registry http://nexus3.dev.fr.auchan.com/repository/npm_all -g'
+alias unsetproxy='unset http_proxy && unset https_proxy && npm config set registry https://registry.npmjs.org'
+
+alias setregistry='npm config set registry http://nexus3.dev.fr.auchan.com/repository/npm_all'
+alias unsetregistry='npm config set registry https://registry.npmjs.com/'
+
 # Directories
 alias db="cd ~/Dropbox"
 alias dl="cd ~/Downloads"

@@ -4,6 +4,8 @@ export GIT_EDITOR="/usr/local/bin/nano"
 export ZSH_HIGHLIGHT_HIGHLIGHTERS_DIR=/usr/local/share/zsh-syntax-highlighting/highlighters
 export LC_ALL=en_US.UTF-8
 # export JAVA_HOME=`/usr/libexec/java_home -v 14`
+# export GOOGLE_APPLICATION_CREDENTIALS=~/work/auchan-rf/arf-data-smart-9f1d12139d58.json
+export GOOGLE_APPLICATION_CREDENTIALS=~/work/auchan-rf/arf-data-smart-dev-01f7f88df18b.json
 
 # nvm
 export NVM_DIR="$XDG_CONFIG_HOME/nvm"
