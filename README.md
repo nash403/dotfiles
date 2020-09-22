@@ -39,6 +39,8 @@ Use the [Makefile](./Makefile) to install everything [listed above](#overview), 
 
     cd ~/.dotfiles
     make
+    
+> Note :warning:: Since this command installs Mac App Store applications, you should be signed in into the Mac App Store before running this command.
 
 ### Specify the `$PATH`
 
