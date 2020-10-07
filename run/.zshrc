@@ -80,6 +80,7 @@ plugins=(
   yarn
   nvm
   sudo
+  fzf
 )
 
 source $ZSH/oh-my-zsh.sh
