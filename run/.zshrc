@@ -186,3 +186,11 @@ if [ -f '/Users/nash/google-cloud-sdk/path.zsh.inc' ]; then . '/Users/nash/googl
 
 # The next line enables shell command completion for gcloud.
 if [ -f '/Users/nash/google-cloud-sdk/completion.zsh.inc' ]; then . '/Users/nash/google-cloud-sdk/completion.zsh.inc'; fi
+
+alias proxyon="export http_proxy='panoz.fra.local:8080';export https_proxy='panoz.fra.local:8080';export all_proxy='panoz.fra.local:8080'"
+alias proxyoff="unset http_proxy; unset https_proxy;unset all_proxy"
+TESTVAR=`networksetup -getwebproxy Wi-Fi|grep 'Enabled\: Yes'`
+TESTPROXY=`networksetup -getwebproxy Wi-Fi|grep 'Server\: panoz.fra.local'`
+if [[ "$TESTVAR" = 'Enabled: Yes' && "$TESTPROXY" = 'Server: panoz.fra.local' ]] ; then
+    proxyon
+fi
