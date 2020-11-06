@@ -126,7 +126,7 @@ else
   return
 fi
 
-# DOTFILES_DIR="$(dirname "$CURRENT_SCRIPT")/$DOTFILES_DIR" # Why did I add this line again???
+DOTFILES_DIR="$(dirname "$CURRENT_SCRIPT")/$DOTFILES_DIR" # Why did I add this line again???
 
 # Make utilities available
 
