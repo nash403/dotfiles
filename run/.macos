@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-COMPUTER_NAME="Shusui MBPro16"
+COMPUTER_NAME="Shusui MBPro16 M1"
 
 osascript -e 'tell application "System Preferences" to quit'
 
