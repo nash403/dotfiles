@@ -62,7 +62,7 @@ mas:
 brew-packages: brew
 	-brew bundle --file=$(DOTFILES_DIR)/Brewfile
 	# Install brews that cannot be installed via a Brewfile (see https://github.com/Homebrew/homebrew-bundle/#note)
-	brew cask install https://raw.githubusercontent.com/popcorn-official/popcorn-desktop/development/casks/popcorn-time.rb
+	# brew cask install https://raw.githubusercontent.com/popcorn-official/popcorn-desktop/development/casks/popcorn-time.rb
 
 node-packages: npm
 	. $(NVM_DIR)/nvm.sh; npm install -g $(shell cat npmfile)
