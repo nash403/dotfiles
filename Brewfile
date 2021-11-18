@@ -1,3 +1,6 @@
+repo = "popcorn-official/popcorn-desktop"
+tap repo, "https://github.com/#{repo}.git"
+
 tap "adoptopenjdk/openjdk"
 tap "homebrew/bundle"
 tap "homebrew/cask-drivers"
@@ -86,6 +89,7 @@ cask "kitematic"
 cask "mamp"
 cask "ngrok"
 cask "numi"
+cask "popcorn-time"
 cask "postman"
 cask "provisionql"
 cask "qlcolorcode"
@@ -107,7 +111,7 @@ cask "vlc"
 cask "webpquicklook"
 cask "webstorm"
 
-mas "Airmail", id: 918858936
+#mas "Airmail", id: 918858936
 mas "Amphetamine", id: 937984704
 mas "Color Juicer", id: 1191209926
 mas "Dato", id: 1470584107
