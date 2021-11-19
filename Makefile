@@ -70,7 +70,7 @@ node-packages: npm
 	. $(NVM_DIR)/nvm.sh; npm install -g $(shell cat npmfile)
 
 gems: ruby
-	export PATH="/usr/local/opt/ruby/bin:$(PATH)"; gem install $(shell cat Gemfile)
+	export PATH="/usr/local/opt/ruby/bin:$(PATH)"; sudo gem install $(shell cat Gemfile)
 
 ohmyzsh:
 	-curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh | bash
