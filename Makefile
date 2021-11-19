@@ -45,6 +45,8 @@ unlink: stow-$(OS)
 
 brew:
 	is-executable brew || curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install | ruby
+	echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> /Users/nash/.zprofile
+	eval "$(/opt/homebrew/bin/brew shellenv)"
 
 git: brew
 	brew install git git-extras
