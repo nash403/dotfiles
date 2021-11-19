@@ -11,6 +11,9 @@ export NVM_DIR="$XDG_CONFIG_HOME/nvm"
 # Android
 export ANDROID_HOME=$HOME/Library/Android/sdk
 
+# Opt out homebrew analytics
+export HOMEBREW_NO_ANALYTICS=1
+
 # Enable persistent REPL history for `node`.
 export NODE_REPL_HISTORY=~/.node_history;
 # Allow 32³ entries; the default is 1000.
