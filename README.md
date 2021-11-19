@@ -22,6 +22,7 @@ It is intended to target macOS systems with zsh shell.
 
     sudo softwareupdate -i -a
     xcode-select --install
+    sudo softwareupdate --install-rosetta # for macOS with M1 chips
 
 The Xcode Command Line Tools includes `git` and `make` (not available on stock macOS).
 Then, install this repo with `curl` available:
