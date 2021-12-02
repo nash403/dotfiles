@@ -21,7 +21,7 @@ alias dotf="cd ~/.dotfiles"
 alias update='sudo softwareupdate -i -a; brew update; brew upgrade; brew cleanup; npm install npm -g; npm update -g; sudo gem update --system; sudo gem update; sudo gem cleanup'
 
 # Trim new lines and copy to clipboard
-alias copy="tr -d '\n' | pbcopy"
+alias copy="tr -d '\n' | pbcopy && echo 'Copied to clipboard.'"
 
 # Recursively delete `.DS_Store` files
 alias cleanup="find . -type f -name '*.DS_Store' -ls -delete"
@@ -61,7 +61,8 @@ alias gball='gb -a -vv'
 alias gchangelog="git log $(git describe --tags --abbrev=0)..HEAD --oneline | cut -f 2-"
 
 alias s="subl ."
-alias copy_ssh="cat ~/.ssh/id_rsa.pub | pbcopy && echo 'Copied to clipboard.'"
+alias copy_ssh="cat ~/.ssh/id_rsa.pub | tr -d '\n' | pbcopy && echo 'Copied to clipboard.'"
+alias copy_ssh_ed="cat ~/.ssh/id_ed25519.pub | tr -d '\n' | pbcopy && echo 'Copied to clipboard.'"
 
 alias pyserver='open http://localhost:8000 && python -m SimpleHTTPServer'
 alias whois="whois -h whois-servers.net"
