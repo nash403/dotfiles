@@ -74,8 +74,8 @@ gems: ruby
 
 ohmyzsh:
 	-curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh | bash
-	git clone https://github.com/denysdovhan/spaceship-prompt.git "$(XDG_CONFIG_HOME)/oh-my-zsh/themes/spaceship-prompt"
-	mkdir -p "$(HOME)/.oh-my-zsh/themes"; ln -s "$(XDG_CONFIG_HOME)/oh-my-zsh/themes/spaceship-prompt/spaceship.zsh-theme" "$(HOME)/.oh-my-zsh/themes"
+	git clone https://github.com/spaceship-prompt/spaceship-prompt.git "$(XDG_CONFIG_HOME)/oh-my-zsh/themes/spaceship-prompt" --depth=1 || echo "spaceship-prompt directory already exists"
+	mkdir -p "$(HOME)/.oh-my-zsh/themes"; ln -s "$(XDG_CONFIG_HOME)/oh-my-zsh/themes/spaceship-prompt/spaceship.zsh-theme" "$(HOME)/.oh-my-zsh/themes"  || echo "could not link spaceship-prompt theme file"
 
 workdirs:
 	mkdir -p "$(XDG_CONFIG_HOME)"
