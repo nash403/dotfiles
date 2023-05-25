@@ -7,9 +7,13 @@ alias nmodulessize="find . -name 'node_modules' -type d -prune -print | xargs du
 alias nmodulesrm="find . -name 'node_modules' -type d -prune -print -exec rm -rf '{}' \;"
 alias gitrm="find . -name '.git' -type d -prune -print -exec rm -rf '{}' \;"
 alias lzd="lazydocker"
+alias dcu="docker-compose up"
+alias dcud="docker-compose up -d"
+alias dcd="docker-compose down"
 alias k="kubectl"
 alias kns="kubens"
 alias ktx="kubectx"
+alias odiff="opendiff"
 
 # Directories
 alias db="cd ~/Dropbox"
@@ -51,9 +55,24 @@ alias nid='npm install --save-dev'
 alias nis='npm install --save'
 alias nr='npm run'
 alias ns='npm start'
+alias nd='npm run dev'
 alias nig='npm install -g'
 alias nlsg="npm list -g --depth=0 2>/dev/null"
 alias nls="npm list --depth=0 2>/dev/null"
+
+# PNPM aliases
+alias pn='pnpm'
+alias pni='pnpm install'
+alias pna='pnpm add'
+alias pnad='pnpm add -D'
+alias pnao='pnpm add -O'
+alias pnag='pnpm add -g'
+alias pns='pnpm start'
+alias pnd='pnpm dev'
+alias pnp='pnpm --if-present --parallel'
+alias pnf='pnpm -F'
+
+# yarn aliases
 alias yarnglobalpkg='cat $(yarn global dir)/package.json'
 
 # More git aliases
@@ -75,6 +94,11 @@ alias localip="ipconfig getifaddr en0"
 
 # Show active network interfaces
 alias ifactive="ifconfig | pcregrep -M -o '^[^\t:]+:([^\n]|\n\t)*status: active'"
+
+# Show ports in use
+alias portsinuse="sudo lsof -i -n -P | grep TCP"
+# alternatively use `sudo lsof -nP -i4TCP:$PORT | grep LISTEN` for a specific port, replace $PORT
+# alternatively use `sudo lsof -i -P | grep LISTEN | grep :$PORT` for a specific port with hostname resolution, this one may take minutes, replace $PORT
 
 # View HTTP traffic
 alias sniff="sudo ngrep -d 'en1' -t '^(GET|POST) ' 'tcp and port 80'"

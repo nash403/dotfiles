@@ -183,10 +183,18 @@ alias reload!='. ~/.zshrc; echo "Reloaded .zshrc..."'
 
 export ZSH_HIGHLIGHT_HIGHLIGHTERS_DIR="$HOMEBREW_PREFIX/share/zsh-syntax-highlighting/highlighters"
 source $HOMEBREW_PREFIX/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+if command -v pyenv 1>/dev/null 2>&1; then
+  eval "$(pyenv init -)"
+fi
 
 # The next line updates PATH for the Google Cloud SDK.
-if [ -f '/Users/nash/google-cloud-sdk/path.zsh.inc' ]; then . '/Users/nash/google-cloud-sdk/path.zsh.inc'; fi
+if [ -f '/Users/nash/src/google-cloud-sdk/path.zsh.inc' ]; then . '/Users/nash/src/google-cloud-sdk/path.zsh.inc'; fi
 
 # The next line enables shell command completion for gcloud.
-if [ -f '/Users/nash/google-cloud-sdk/completion.zsh.inc' ]; then . '/Users/nash/google-cloud-sdk/completion.zsh.inc'; fi
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+if [ -f '/Users/nash/src/google-cloud-sdk/completion.zsh.inc' ]; then . '/Users/nash/src/google-cloud-sdk/completion.zsh.inc'; fi
+
+# tabtab source for packages
+# uninstall by removing these lines
+[[ -f ~/.config/tabtab/zsh/__tabtab.zsh ]] && . ~/.config/tabtab/zsh/__tabtab.zsh || true

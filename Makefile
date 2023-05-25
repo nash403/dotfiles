@@ -13,7 +13,7 @@ macos: sudo core-macos packages link
 
 linux: core-linux link
 
-core-macos: brew git npm ruby
+core-macos: brew git node pnpm ruby
 
 core-linux:
 	apt-get update
@@ -51,7 +51,10 @@ brew:
 git: brew
 	brew install git git-extras
 
-npm:
+pnpm:
+	brew install pnpm
+
+node:
 	curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
 	. $(NVM_DIR)/nvm.sh; nvm install --lts
 
@@ -66,8 +69,8 @@ brew-packages: brew
 	# Install brews that cannot be installed via a Brewfile (see https://github.com/Homebrew/homebrew-bundle/#note)
 	# brew cask install https://raw.githubusercontent.com/popcorn-official/popcorn-desktop/development/casks/popcorn-time.rb
 
-node-packages: npm
-	. $(NVM_DIR)/nvm.sh; npm install -g $(shell cat npmfile)
+node-packages: node
+	. $(NVM_DIR)/nvm.sh; pnpm add -g $(shell cat npmfile)
 
 gems: ruby
 	export PATH="/usr/local/opt/ruby/bin:$(PATH)"; sudo gem install $(shell cat Gemfile)
