@@ -4,7 +4,6 @@
 
 It is intended to target macOS systems with zsh shell.
 
-
 ## Overview
 
 ![](https://imgs.xkcd.com/comics/borrow_your_laptop.png)
@@ -16,7 +15,11 @@ It is intended to target macOS systems with zsh shell.
 - [Mackup](https://github.com/lra/mackup) (sync application settings)
 - useful [aliases](./system/.alias))
 
-## On fresh install...
+## Before you start
+
+If you had a previous macbook with Mackup installed, make sure to run `mackup backup` to save your app settings before installing your new machine.
+
+## On fresh install
 
 ### Prerequisites
 
@@ -40,7 +43,7 @@ Use the [Makefile](./Makefile) to install everything [listed above](#overview), 
 
     cd ~/.dotfiles
     make
-    
+
 > Note :warning:: Since this command installs Mac App Store applications, you should be signed in into the Mac App Store before running this command.
 
 ### Specify the `$PATH`
@@ -57,14 +60,13 @@ export PATH="/usr/local/bin:$PATH"
 
 You can put your custom settings, such as Git credentials in the `system/.custom` file which will be sourced from `.zshrc` automatically. This file is in `.gitignore`.
 
-
-## Post-install
+## On Post-install
 
 ### Mackup
 
-  - Log in to Dropbox (and wait until synced)
-  - `ln -s ~/.config/mackup/.mackup.cfg ~` (until [#632](https://github.com/lra/mackup/pull/632) is fixed)
-  - `mackup restore`
+- Log in to Dropbox (and wait until synced)
+- `ln -s ~/.config/mackup/.mackup.cfg ~` (until [#632](https://github.com/lra/mackup/pull/632) is fixed)
+- `mackup restore`
 
 ### Sensible macOS defaults
 
@@ -79,16 +81,18 @@ Definitely go through and check each [setting](./run/.macos) before running, thi
 ## Additional resources & Credits
 
 Where I mainly ~~stole ideas~~ got inspiration from:
-  - [webpro's dotfiles](https://github.com/webpro/dotfiles)
-  - [Dennis Muensterer's dotfiles](https://github.com/dnnsmnstrr/dotfiles)
-  - and of course [Mathias Bynens' dotfiles](https://github.com/mathiasbynens/dotfiles)
+
+- [webpro's dotfiles](https://github.com/webpro/dotfiles)
+- [Dennis Muensterer's dotfiles](https://github.com/dnnsmnstrr/dotfiles)
+- and of course [Mathias Bynens' dotfiles](https://github.com/mathiasbynens/dotfiles)
 
 Other resources:
-  - [Homebrew](https://brew.sh)
-  - [Antigen](http://antigen.sharats.me/)
-  - [Mac App Store CLI](https://github.com/mas-cli/mas)
-  - [Spaceship prompt](https://github.com/denysdovhan/spaceship-prompt)
-  - [NVM](https://github.com/nvm-sh/nvm)
+
+- [Homebrew](https://brew.sh)
+- [Antigen](http://antigen.sharats.me/)
+- [Mac App Store CLI](https://github.com/mas-cli/mas)
+- [Spaceship prompt](https://github.com/denysdovhan/spaceship-prompt)
+- [NVM](https://github.com/nvm-sh/nvm)
 
 Many thanks to the [dotfiles community](https://dotfiles.github.io).
 
