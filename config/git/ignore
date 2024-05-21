@@ -1,1 +1,8 @@
-/Users/nash/Dropbox/Mackup/.config/git/ignore
+*~
+._*
+.DS_Store
+.idea
+.vscode
+node_modules
+bower_components
+npm-debug.log
