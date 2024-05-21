@@ -32,9 +32,9 @@ Then, install this repo with `curl` available:
 
     curl -o- https://raw.githubusercontent.com/nash403/dotfiles/master/remote-install.sh | bash
 
-This will clone (using `git`), or download (using `curl` or `wget`), this repo to `~/projects/dotfiles` and symlink it to `~/.dotfiles`. Alternatively, clone manually into the desired location:
+This will clone (using `git`), or download (using `curl` or `wget`), this repo to `~/dev/dotfiles` and symlink it to `~/.dotfiles`. Alternatively, clone manually into the desired location:
 
-    git clone https://github.com/nash403/dotfiles.git ~/projects/dotfiles
+    git clone https://github.com/nash403/dotfiles.git ~/dev/dotfiles
     ln -s /the/full/path/to/where/you/cloned/dotfiles ~/.dotfiles
 
 ### Init everything

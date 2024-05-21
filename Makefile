@@ -82,5 +82,5 @@ ohmyzsh:
 
 workdirs:
 	mkdir -p "$(XDG_CONFIG_HOME)"
-	mkdir -p "$(HOME)/projects"
+	mkdir -p "$(HOME)/dev"
 	mkdir -p "$(HOME)/work"

@@ -14,12 +14,14 @@ alias k="kubectl"
 alias kns="kubens"
 alias ktx="kubectx"
 alias odiff="opendiff"
+alias macback="yes | mackup backup && yes | mackup uninstall"
+alias wherecertif="mkcert -CAROOT"
 
 # Directories
 alias db="cd ~/Dropbox"
 alias dl="cd ~/Downloads"
 alias dt="cd ~/Desktop"
-alias projects="cd ~/projects"
+alias dev="cd ~/dev"
 alias work="cd ~/work"
 alias docs="cd ~/Documents"
 alias dotf="cd ~/.dotfiles"
@@ -71,6 +73,18 @@ alias pns='pnpm start'
 alias pnd='pnpm dev'
 alias pnp='pnpm --if-present --parallel'
 alias pnf='pnpm -F'
+
+# Bun aliases
+alias buni='bun install'
+alias buna='bun add'
+alias bunad='bun add -D'
+alias bunao='bun add --optional'
+alias bunag='bun add -g'
+alias bunlk='bun link'
+alias bununlk='bun unlink'
+alias buns='bun run start'
+alias bund='bun run dev'
+alias bunupf='bun update -f'
 
 # yarn aliases
 alias yarnglobalpkg='cat $(yarn global dir)/package.json'

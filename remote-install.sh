@@ -2,7 +2,7 @@
 
 SOURCE="https://github.com/nash403/dotfiles"
 TARBALL="$SOURCE/tarball/master"
-TARGET="$HOME/projects/dotfiles"
+TARGET="$HOME/dev/dotfiles"
 TARGET_SYMLINK="$HOME/.dotfiles"
 TAR_CMD="tar -xzv -C "$TARGET" --strip-components=1 --exclude='{.gitignore}'"
 

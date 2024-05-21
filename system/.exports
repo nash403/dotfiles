@@ -3,7 +3,7 @@ export EDITOR="$HOME/.dotfiles/bin/editor"
 # export GIT_EDITOR="/usr/local/bin/nano"
 export ZSH_HIGHLIGHT_HIGHLIGHTERS_DIR=/usr/local/share/zsh-syntax-highlighting/highlighters
 export LC_ALL=en_US.UTF-8
-# export JAVA_HOME=`/usr/libexec/java_home -v 14`
+export JAVA_HOME=`/usr/libexec/java_home`
 
 
 # Docker
@@ -15,6 +15,15 @@ export NVM_DIR="$XDG_CONFIG_HOME/nvm"
 
 # Android
 export ANDROID_HOME=$HOME/Library/Android/sdk
+export ANDROID_SDK_ROOT=$ANDROID_HOME
+export PATH=$PATH:$ANDROID_HOME/emulator
+export PATH=$PATH:$ANDROID_HOME/tools
+export PATH=$PATH:$ANDROID_HOME/tools/bin
+export PATH=$PATH:$ANDROID_HOME/platform-tools
+
+# android sdk root
+export PATH=$PATH:$ANDROID_SDK_ROOT/tools
+export PATH=$PATH:$ANDROID_SDK_ROOT/platform-tools
 
 # Opt out homebrew analytics
 export HOMEBREW_NO_ANALYTICS=1

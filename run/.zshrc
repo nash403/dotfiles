@@ -79,7 +79,7 @@ plugins=(
   git
   command-not-found
   npm
-  yarn
+  bun
   nvm
   sudo
   fzf
@@ -212,3 +212,6 @@ esac
 # bun
 export BUN_INSTALL="$HOME/.bun"
 export PATH="$BUN_INSTALL/bin:$PATH"
+
+test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
+
