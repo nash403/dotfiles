@@ -4,7 +4,7 @@
 # or here: https://www.nano-editor.org/dist/v3/nanorc.5.html
 
 # Editor:
-set morespace
+# set morespace
 
 set tabstospaces
 
@@ -14,4 +14,4 @@ set tabstospaces
 # set constantshow
 
 # UX:
-set smooth
+# set smooth

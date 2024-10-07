@@ -93,7 +93,7 @@ alias yarnglobalpkg='cat $(yarn global dir)/package.json'
 alias ggpullr='ggpull --rebase'
 alias garch='git archive HEAD --format=zip'
 alias gta='git tag'
-alias gball='gb -a -vv'
+alias gball='git branch -a -vv'
 alias gchangelog="git log $(git describe --tags --abbrev=0)..HEAD --oneline | cut -f 2-"
 
 alias s="subl ."
@@ -175,8 +175,9 @@ alias displays="system_profiler SPDisplaysDataType"
 alias cpuinfo="sysctl -n machdep.cpu.brand_string"
 alias cpu='top -o cpu'   # CPU
 alias mem='top -o rsize' # Memory
-
 alias qr="qrcode-terminal"
+alias datenow='date +%Y.%m.%d.%H%M%S'
+alias datenowUTC='date -u +%Y.%m.%d.%H%M%SZ'
 
 # LoLs
 

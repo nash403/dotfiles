@@ -77,12 +77,22 @@ HIST_STAMPS="yyyy-mm-dd"
 # Add wisely, as too many plugins slow down shell startup.
 plugins=(
   git
+  git-prompt
   command-not-found
+  dotenv
   npm
   bun
   nvm
   sudo
+  ssh
+  kubectl
+  qrcode
   fzf
+  universalarchive
+  vscode
+  z
+  zsh-interactive-cd
+  aliases
 )
 
 source $ZSH/oh-my-zsh.sh
@@ -215,3 +225,5 @@ export PATH="$BUN_INSTALL/bin:$PATH"
 
 test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
 
+
+PATH=~/.console-ninja/.bin:$PATH
