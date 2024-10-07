@@ -200,24 +200,24 @@ if command -v pyenv 1>/dev/null 2>&1; then
 fi
 
 # The next line updates PATH for the Google Cloud SDK.
-if [ -f '/Users/nash/src/google-cloud-sdk/path.zsh.inc' ]; then . '/Users/nash/src/google-cloud-sdk/path.zsh.inc'; fi
+if [ -f "/Users/$(whoami)/src/google-cloud-sdk/path.zsh.inc" ]; then . "/Users/$(whoami)/src/google-cloud-sdk/path.zsh.inc"; fi
 
 # The next line enables shell command completion for gcloud.
-if [ -f '/Users/nash/src/google-cloud-sdk/completion.zsh.inc' ]; then . '/Users/nash/src/google-cloud-sdk/completion.zsh.inc'; fi
+if [ -f "/Users/$(whoami)/src/google-cloud-sdk/completion.zsh.inc" ]; then . "/Users/$(whoami)/src/google-cloud-sdk/completion.zsh.inc"; fi
 
 # tabtab source for packages
 # uninstall by removing these lines
 [[ -f ~/.config/tabtab/zsh/__tabtab.zsh ]] && . ~/.config/tabtab/zsh/__tabtab.zsh || true
 
 # pnpm
-export PNPM_HOME="/Users/nash/Library/pnpm"
+export PNPM_HOME="/Users/$(whoami)/Library/pnpm"
 case ":$PATH:" in
   *":$PNPM_HOME:"*) ;;
   *) export PATH="$PNPM_HOME:$PATH" ;;
 esac
 # pnpm end
 # bun completions
-[ -s "/Users/nash/.bun/_bun" ] && source "/Users/nash/.bun/_bun"
+[ -s "/Users/$(whoami)/.bun/_bun" ] && source "/Users/$(whoami)/.bun/_bun"
 
 # bun
 export BUN_INSTALL="$HOME/.bun"

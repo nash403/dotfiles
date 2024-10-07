@@ -44,7 +44,8 @@ unlink: stow-$(OS)
 	for FILE in $$(\ls -A run); do if [ -f $(HOME)/$$FILE.bak ]; then mv -v $(HOME)/$$FILE.bak $(HOME)/$${FILE%%.bak}; fi; done
 
 brew:
-	echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> /Users/nash/.zprofile
+	# echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> /Users/nash/.zprofile
+  echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> `/Users/$(shell whoami)/.zprofile`
 	eval "$(/opt/homebrew/bin/brew shellenv)"
 	is-executable brew || curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install | ruby
 
