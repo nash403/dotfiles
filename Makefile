@@ -58,6 +58,9 @@ node:
 	curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
 	. $(NVM_DIR)/nvm.sh; nvm install --lts
 
+bun:
+	curl -fsSL https://bun.sh/install | bash
+
 ruby: brew
 	brew install ruby
 
@@ -65,11 +68,11 @@ mas:
 	brew install mas
 
 brew-packages: brew
-	-brew bundle --file=$(DOTFILES_DIR)/Brewfile
+	brew bundle --file=$(DOTFILES_DIR)/Brewfile
 	# Install brews that cannot be installed via a Brewfile (see https://github.com/Homebrew/homebrew-bundle/#note)
 	# brew cask install https://raw.githubusercontent.com/popcorn-official/popcorn-desktop/development/casks/popcorn-time.rb
 
-node-packages: node
+node-packages: node bun
 	. $(NVM_DIR)/nvm.sh; pnpm add -g $(shell cat npmfile)
 
 gems: ruby
