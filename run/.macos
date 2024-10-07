@@ -145,8 +145,8 @@ defaults write com.apple.BluetoothAudioAgent "Apple Bitpool Min (editable)" -int
 ###############################################################################
 
 # Require password immediately after sleep or screen saver begins
-# defaults write com.apple.screensaver askForPassword -int 1
-# defaults write com.apple.screensaver askForPasswordDelay -int 0
+defaults write com.apple.screensaver askForPassword -int 1
+defaults write com.apple.screensaver askForPasswordDelay -int 0
 
 # Save screenshots to the desktop
 defaults write com.apple.screencapture location -string "${HOME}/Desktop"
@@ -245,6 +245,10 @@ defaults write com.apple.dock no-bouncing -bool true
 # defaults write com.apple.dock wvous-tr-corner -int 0
 # defaults write com.apple.dock wvous-bl-corner -int 0
 # defaults write com.apple.dock wvous-br-corner -int 0
+
+# Enable hot corner for screen locking (bottom-left corner)
+defaults write com.apple.dock wvous-bl-corner -int 13
+defaults write com.apple.dock wvous-bl-modifier -int 0
 
 # Don't show recently used applications in the Dock
 defaults write com.Apple.Dock show-recents -bool false
