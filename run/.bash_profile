@@ -77,3 +77,7 @@ export https_proxy=`scutil --proxy | awk '\
   /HTTPSPort/ { port = $3; } \
   END { if (enabled == "1") { print "https://" server ":" port; } }'`
 export HTTPS_PROXY="${https_proxy}"
+
+#THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
+export SDKMAN_DIR="$HOME/.sdkman"
+[[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"
