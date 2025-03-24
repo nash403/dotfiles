@@ -62,6 +62,8 @@ You can put your custom settings, such as Git credentials in the `system/.custom
 
 ## On Post-install
 
+Check the paths in `config/git/config` and update them accordingly to yours. Typically replace the username and github user.
+
 ### Mackup
 
 - Log in to Dropbox (and wait until synced)
@@ -77,6 +79,8 @@ When setting up a new Mac, you may want to set some sensible macOS defaults:
 ```
 
 Definitely go through and check each [setting](./run/.macos) before running, this can change some major things!
+
+> Note: check the first setting to set your computer name.
 
 ## Additional resources & Credits
 
