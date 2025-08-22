@@ -15,3 +15,6 @@ export PATH="$PATH:$HOME/.gem/bin"
 
 # Postgres client libpq without full postgres
 export PATH="/opt/homebrew/opt/libpq/bin:$PATH"
+
+# Make the non "g" aliased versions of GNU coreutils to be exported to your path
+export PATH="$HOMEBREW_PREFIX/opt/coreutils/libexec/gnubin:$PATH"
