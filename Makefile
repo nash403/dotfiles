@@ -64,7 +64,8 @@ bun:
 	curl -fsSL https://bun.sh/install | bash
 
 ruby: brew
-	brew install ruby
+	brew install ruby rbenv
+	rbenv init
 
 mas:
 	brew install mas
