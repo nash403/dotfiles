@@ -13,7 +13,7 @@
 	trustctime = false
 	autocrlf = input
 	untrackedCache = true
-	pager = diff-so-fancy | less --tabs=4 -RFX
+	pager = diff-so-fancy | less --tabs=4 -RF
 
 [credential]
 	helper = osxkeychain
@@ -47,7 +47,10 @@
 	prune = true
 
 [diff]
-	tool = /Users/nash/.dotfiles/bin/git-diff-cmd
+	tool = opendiff
+
+[difftool "opendiff"]
+	cmd = /Users/nash/.dotfiles/bin/git-diff-cmd "$LOCAL" "$REMOTE"
 
 [alias]
 	amend = commit --amend --reuse-message=HEAD

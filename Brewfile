@@ -1,5 +1,6 @@
 repo = "popcorn-official/popcorn-desktop"
 tap repo, "https://github.com/#{repo}.git"
+tap ferdium/ferdium
 #ENV["HOMEBREW_POPCORN_TIME_BUILD"] = "false"
 
 tap "homebrew/bundle"
@@ -19,7 +20,9 @@ brew "brew-cask-completion"
 brew "cocoapods"
 brew "colima"
 brew "coreutils"
+# brew "derailed/k9s/k9s"
 brew "diff-so-fancy"
+brew "ferdium"
 brew "ffmpeg"
 brew "findutils"
 brew "fx"
@@ -30,12 +33,15 @@ brew "grep"
 brew "httpie"
 brew "imagemagick"
 brew "jq"
+brew "kdash-rs/kdash"
+brew "ksdme/tap/ut"
 brew "kubectx"
 brew "lazydocker"
 brew "lazygit"
 brew "libpq"
 brew "mackup"
 brew "mas"
+brew "mise"
 brew "mkcert"
 brew "moreutils"
 brew "nano"
@@ -44,9 +50,9 @@ brew "ngrep"
 brew "nss"
 brew "openssh"
 brew "pandoc"
-brew "pnpm"
-brew "pyenv"
-brew "python"
+# brew "pnpm" # use mise
+# brew "pyenv"  # use mise
+# brew "python" # use mise
 brew "redis"
 brew "ssh-copy-id"
 brew "stern"
@@ -63,8 +69,10 @@ cask "aerial"
 cask "airflow"
 cask "alfred"
 cask "android-file-transfer"
+cask "betterzip"
 cask "cakebrew"
 cask "calibre"
+cask "cardinal-search"
 cask "cryptomator"
 cask "cyberduck"
 cask "discord"
@@ -80,12 +88,12 @@ cask "font-meslo-nerd-font-mono"
 cask "font-meslo-nerd-font"
 cask "font-mononoki"
 cask "font-roboto"
-# cask "gitkraken"
+# cask "gitkraken" # use vscode git lens
 cask "google-chrome"
 cask "imageoptim"
 cask "insomnia"
 cask "iterm2"
-cask "lens"
+# cask "lens" # use alternative like derailed/k9s/k9s (buggy?) or kdash-rs/kdash
 cask "ngrok"
 cask "popcorn-time" #, args: { "no-quarantine": true }
 cask "provisionql"
@@ -96,23 +104,22 @@ cask "qlstephen"
 cask "qlvideo"
 cask "quicklook-csv"
 cask "quicklook-json"
-# cask "rambox"
+# cask "rambox" # use "ferdium" instead
 cask "sublime-text"
 cask "suspicious-package"
+cask "syntax-highlight"
 cask "the-unarchiver"
 cask "virtualbox"
 cask "visual-studio-code"
 cask "vlc"
-cask "webpquicklook"
 
-#mas "Airmail", id: 918858936
 mas "Amphetamine", id: 937984704
 mas "Color Juicer", id: 1191209926
+mas "Color Picker", id: 1545870783
 mas "Dato", id: 1470584107
 mas "Gapplin", id: 768053424
-mas "iMovie", id: 408981434
-mas "Keynote", id: 409183694
-mas "Numbers", id: 409203825
-mas "Pages", id: 409201541
-mas "Redis Desktop Manager", id: 1475905948
+mas "Goodnotes", id: 1444383602
+mas "MegaIPTVmacOS", id: 1494386779
+mas "Pixea", id: 1507782672
+mas "QuickDrop", id: 6740147178
 mas "Xcode", id: 497799835

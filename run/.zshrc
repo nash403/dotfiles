@@ -151,42 +151,13 @@ for DOTFILE in "$DOTFILES_DIR"/system/.{path,exports,alias,function,function_fs,
 done
 
 # Clean up
-
 unset READLINK CURRENT_SCRIPT SCRIPT_PATH DOTFILE EXTRAFILE
 
 # Export
-
 export DOTFILES_DIR DOTFILES_EXTRA_DIR
 
-# User configuration
-
-export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm
-
-# place this after nvm initialization!
-autoload -U add-zsh-hook
-load-nvmrc() {
-  local node_version="$(nvm version)"
-  local nvmrc_path="$(nvm_find_nvmrc)"
-
-  if [ -n "$nvmrc_path" ]; then
-    local nvmrc_node_version=$(nvm version "$(cat "${nvmrc_path}")")
-
-    if [ "$nvmrc_node_version" = "N/A" ]; then
-      nvm install
-    elif [ "$nvmrc_node_version" != "$node_version" ]; then
-      nvm use
-    fi
-  elif [ "$node_version" != "$(nvm version default)" ]; then
-    echo "Reverting to nvm default version"
-    nvm use default
-  fi
-}
-add-zsh-hook chpwd load-nvmrc
-load-nvmrc
-
-# export MANPATH="/usr/local/man:$MANPATH"
-
+###
+# Aliases & tools configuration
 alias zshconfig="nano ~/.zshrc"
 alias theme="echo $RANDOM_THEME"
 alias reload!='. ~/.zshrc; echo "Reloaded .zshrc..."'
@@ -195,9 +166,15 @@ export ZSH_HIGHLIGHT_HIGHLIGHTERS_DIR="$HOMEBREW_PREFIX/share/zsh-syntax-highlig
 source $HOMEBREW_PREFIX/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
-if command -v pyenv 1>/dev/null 2>&1; then
-  eval "$(pyenv init -)"
-fi
+# tabtab source for packages
+# uninstall by removing these lines
+[[ -f ~/.config/tabtab/zsh/__tabtab.zsh ]] && . ~/.config/tabtab/zsh/__tabtab.zsh || true
+
+# Activate Mise to updates env var and PATH every time I prompt to ensure using the correct versions of tools
+eval "$(mise activate zsh)"
+
+###
+# Secondary tools
 
 # The next line updates PATH for the Google Cloud SDK.
 if [ -f "/Users/$(whoami)/src/google-cloud-sdk/path.zsh.inc" ]; then . "/Users/$(whoami)/src/google-cloud-sdk/path.zsh.inc"; fi
@@ -205,29 +182,11 @@ if [ -f "/Users/$(whoami)/src/google-cloud-sdk/path.zsh.inc" ]; then . "/Users/$
 # The next line enables shell command completion for gcloud.
 if [ -f "/Users/$(whoami)/src/google-cloud-sdk/completion.zsh.inc" ]; then . "/Users/$(whoami)/src/google-cloud-sdk/completion.zsh.inc"; fi
 
-# tabtab source for packages
-# uninstall by removing these lines
-[[ -f ~/.config/tabtab/zsh/__tabtab.zsh ]] && . ~/.config/tabtab/zsh/__tabtab.zsh || true
-
-# pnpm
-export PNPM_HOME="/Users/$(whoami)/Library/pnpm"
-case ":$PATH:" in
-  *":$PNPM_HOME:"*) ;;
-  *) export PATH="$PNPM_HOME:$PATH" ;;
-esac
-# pnpm end
-# bun completions
-[ -s "/Users/$(whoami)/.bun/_bun" ] && source "/Users/$(whoami)/.bun/_bun"
-
-# bun
-export BUN_INSTALL="$HOME/.bun"
-export PATH="$BUN_INSTALL/bin:$PATH"
-
 test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
 
 
 PATH=~/.console-ninja/.bin:$PATH
 
-#THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
-export SDKMAN_DIR="$HOME/.sdkman"
-[[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"
+# Added by LM Studio CLI (lms)
+export PATH="$PATH:/Users/nash/.lmstudio/bin"
+# End of LM Studio CLI section

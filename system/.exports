@@ -5,26 +5,6 @@ export LAUNCH_EDITOR=code
 export ZSH_HIGHLIGHT_HIGHLIGHTERS_DIR=/usr/local/share/zsh-syntax-highlighting/highlighters
 export LC_ALL=en_US.UTF-8
 
-
-# Docker
-# comment the following if not using colima
-# export DOCKER_HOST="unix://${HOME}/.colima/default/docker.sock"
-
-# nvm
-export NVM_DIR="$XDG_CONFIG_HOME/nvm"
-
-# Android
-export ANDROID_HOME=$HOME/Library/Android/sdk
-export ANDROID_SDK_ROOT=$ANDROID_HOME
-export PATH=$PATH:$ANDROID_HOME/emulator
-export PATH=$PATH:$ANDROID_HOME/tools
-export PATH=$PATH:$ANDROID_HOME/tools/bin
-export PATH=$PATH:$ANDROID_HOME/platform-tools
-
-# android sdk root
-export PATH=$PATH:$ANDROID_SDK_ROOT/tools
-export PATH=$PATH:$ANDROID_SDK_ROOT/platform-tools
-
 # Opt out homebrew analytics
 export HOMEBREW_NO_ANALYTICS=1
 
@@ -49,3 +29,25 @@ export LESS_TERMCAP_md="${yellow}";
 
 # Don’t clear the screen after quitting a manual page.
 export MANPAGER='less -X';
+
+# Docker
+# comment the following if not using colima
+# export DOCKER_HOST="unix://${HOME}/.colima/default/docker.sock"
+
+# nvm
+# export NVM_DIR="$XDG_CONFIG_HOME/nvm"
+
+# Android
+export ANDROID_HOME=$HOME/Library/Android/sdk
+export ANDROID_SDK_ROOT=$ANDROID_HOME
+export PATH=$PATH:$ANDROID_HOME/emulator
+export PATH=$PATH:$ANDROID_HOME/tools
+export PATH=$PATH:$ANDROID_HOME/tools/bin
+export PATH=$PATH:$ANDROID_HOME/platform-tools
+
+# android sdk root
+export PATH=$PATH:$ANDROID_SDK_ROOT/tools
+export PATH=$PATH:$ANDROID_SDK_ROOT/platform-tools
+
+# For Claude Code
+export PATH="$HOME/.local/bin:$PATH"
