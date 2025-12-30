@@ -75,24 +75,18 @@ HIST_STAMPS="yyyy-mm-dd"
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
+# Example plugins: dotenv, git-prompt, ... (see https://github.com/ohmyzsh/ohmyzsh/wiki/Plugins)
 plugins=(
-  git
-  git-prompt
-  command-not-found
-  dotenv
-  npm
-  bun
-  nvm
-  sudo
-  ssh
-  kubectl
-  qrcode
+  aliases
   fzf
+  git
+  isodate
+  bun
+  httpie
+  ssh
   universalarchive
-  vscode
   z
   zsh-interactive-cd
-  aliases
 )
 
 source $ZSH/oh-my-zsh.sh
