@@ -94,7 +94,7 @@ alias ggpullr='ggpull --rebase'
 alias garch='git archive HEAD --format=zip'
 alias gta='git tag'
 alias gball='git branch -a -vv'
-alias gchangelog="git log $(git describe --tags --abbrev=0)..HEAD --oneline | cut -f 2-"
+alias gchangelog='git log "$(git describe --tags --abbrev=0 2>/dev/null)..HEAD" --oneline | cut -f 2-'
 
 alias s="subl ."
 alias copy_ssh="cat ~/.ssh/id_rsa.pub | tr -d '\n' | pbcopy && echo 'Copied to clipboard.'"
