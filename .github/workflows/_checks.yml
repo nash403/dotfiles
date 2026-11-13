@@ -79,6 +79,7 @@ jobs:
           check "user.email in ~/.gitconfig" '[ "$(git config --file "$CI_HOME/.gitconfig" user.email)" = ci@example.test ]'
           check "SSH step skipped" '[ ! -e "$CI_HOME/.ssh" ]'
           check "machine name not written" '! grep -q COMPUTER_NAME "$env_file"'
+          check "Mackup folder defaults to Mackup" "grep -qxF \"MACKUP_DIR='Mackup'\" \"$env_file\""
           exit "$failed"
 
       # A real Ubuntu, for what the bats tests can only fake: hostnamectl and
@@ -88,8 +89,8 @@ jobs:
         if: runner.os == 'Linux'
         run: |
           answers=$(mktemp)
-          #                      ready chsh clone dev work name email machine         create recap make
-          printf '%s\n' "" n "" "" "" "" "" "CI Wizard Box" n y n >"$answers"
+          #                      ready chsh clone dev work backup name email machine         create recap make
+          printf '%s\n' "" n "" "" "" ""     "" "" "CI Wizard Box" n y n >"$answers"
           wizard_home=$(mktemp -d)
           HOME="$wizard_home" SHELL=/bin/bash DOTFILES_TTY="$answers" \
             DOTFILES_REPO="file://$GITHUB_WORKSPACE" DOTFILES_BRANCH=ci-under-test \
