@@ -15,6 +15,7 @@ Thumbs.db
 
 # IDE
 .vscode
+!.vscode/settings.json
 
 node_modules/
 *.lock
