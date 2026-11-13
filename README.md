@@ -37,7 +37,8 @@ Then **sign in to the App Store app**: `make` installs App Store apps and cannot
 curl -fsSL https://raw.githubusercontent.com/nash403/dotfiles/master/install.sh | sh
 ```
 
-The wizard asks:
+<details>
+<summary>What the wizard asks</summary>
 
 1. where to clone the repo (default `~/dev/dotfiles`; `~/.dotfiles` always points to it),
 2. your personal and work project folders (default `~/dev` and `~/work`),
@@ -45,11 +46,24 @@ The wizard asks:
 4. the machine name,
 5. whether to create an SSH key, sign your commits with it, and add it to GitHub or GitLab.
 
-It shows a summary before changing anything, then clones, writes your answers and offers to run `make`. To try the questions without changing anything, add `DOTFILES_DRY_RUN=1` before `sh`: the wizard then only prints what it would write and run. To install a fork or another branch, set `DOTFILES_REPO` or `DOTFILES_BRANCH` before `sh`:
+It shows a summary before changing anything, then clones, writes your answers and offers to run `make`. To try the questions without changing anything, add `DOTFILES_DRY_RUN=1` before `sh`: the wizard then only prints what it would write and run.
+
+</details>
+
+<details>
+<summary>Install a fork or another branch</summary>
+
+Set `DOTFILES_REPO` or `DOTFILES_BRANCH` before `sh`:
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/nash403/dotfiles/master/install.sh | DOTFILES_REPO=https://github.com/you/dotfiles sh
 ```
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/nash403/dotfiles/next/install.sh | DOTFILES_BRANCH=next sh
+```
+
+</details>
 
 ### Then
 

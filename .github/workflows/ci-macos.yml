@@ -2,11 +2,14 @@ name: ci-macos
 
 # Once per change: pull requests run the checks on their own; push only covers
 # master (its badge in the README) so a branch with an open PR is not checked
-# twice. Any branch can be checked by hand from the Actions tab.
+# twice. Any branch can be checked by hand from the Actions tab. Changes that
+# only touch Markdown files (docs) skip the checks.
 on:
   push:
     branches: [master]
+    paths-ignore: ['**.md']
   pull_request:
+    paths-ignore: ['**.md']
   workflow_dispatch:
 
 jobs:
