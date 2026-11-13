@@ -1,5 +1,7 @@
+# Work related
+alias claude-work='CLAUDE_CONFIG_DIR="$HOME/.claude-work" claude'
+
 # My aliases
-alias gmojic='gitmoji -c'
 alias c='clear'
 alias listaliases="alias | sed 's/=.*//'"
 alias listfunctions="declare -f | grep '^[a-z].* ()' | sed 's/{$//'" # show non _prefixed functions
@@ -7,15 +9,16 @@ alias nmodulessize="find . -name 'node_modules' -type d -prune -print | xargs du
 alias nmodulesrm="find . -name 'node_modules' -type d -prune -print -exec rm -rf '{}' \;"
 alias gitrm="find . -name '.git' -type d -prune -print -exec rm -rf '{}' \;"
 alias lzd="lazydocker"
-alias dcu="docker-compose up"
-alias dcud="docker-compose up -d"
-alias dcd="docker-compose down"
+alias dcu="docker compose up"
+alias dcud="docker compose up -d"
+alias dcd="docker compose down"
 alias k="kubectl"
 alias kns="kubens"
 alias ktx="kubectx"
 alias odiff="opendiff"
 alias macback="yes | mackup backup && yes | mackup uninstall"
 alias wherecertif="mkcert -CAROOT"
+alias dck='colima status 2>&1 | head -1; echo "context: $(docker context show)"; echo "DOCKER_HOST: ${DOCKER_HOST:-<vide>}"'
 
 # Directories
 alias db="cd ~/Dropbox"
@@ -26,8 +29,8 @@ alias work="cd ~/work"
 alias docs="cd ~/Documents"
 alias dotf="cd ~/.dotfiles"
 
-# Get macOS Software Updates, and update installed Ruby gems, Homebrew, npm, and their installed packages
-alias update='sudo softwareupdate -i -a; brew update; brew upgrade; brew cleanup; npm install npm -g; npm update -g; sudo gem update --system; sudo gem update; sudo gem cleanup'
+# Get macOS Software Updates, and update package managers and their installed packages
+alias update='sudo softwareupdate -i -a; brew update; brew upgrade; mise self-update; mise install'
 
 # Trim new lines and copy to clipboard
 alias copy="tr -d '\n' | pbcopy && echo 'Copied to clipboard.'"
@@ -120,19 +123,6 @@ alias httpdump="sudo tcpdump -i en1 -n -s 0 -w - | grep -a -o -E \"Host\: .*|GET
 
 alias week='date +%V'
 
-# Show/hide hidden files in Finder
-alias show="defaults write com.apple.finder AppleShowAllFiles -bool true && killall Finder"
-alias hide="defaults write com.apple.finder AppleShowAllFiles -bool false && killall Finder"
-
-# Hide/show all desktop icons (useful when presenting)
-alias hidedesktop="defaults write com.apple.finder CreateDesktop -bool false && killall Finder"
-alias showdesktop="defaults write com.apple.finder CreateDesktop -bool true && killall Finder"
-
-# Disable Spotlight
-alias spotoff="sudo mdutil -a -i off"
-# Enable Spotlight
-alias spoton="sudo mdutil -a -i on"
-
 # URL-encode strings
 alias urlencode='python -c "import sys, urllib as ul; print ul.quote_plus(sys.argv[1]);"'
 
@@ -154,15 +144,8 @@ done
 alias stfu="osascript -e 'set volume output muted true'"
 alias pumpitup="osascript -e 'set volume output volume 100'"
 
-# Lock the screen (when going AFK)
-alias afk="/System/Library/CoreServices/Menu\ Extras/User.menu/Contents/Resources/CGSession -suspend"
-alias screensaver="open /System/Library/CoreServices/ScreenSaverEngine.app"
-
 # Print each PATH entry on a separate line
 alias paths='echo -e ${PATH//:/\\n}'
-
-# quicklook from command line
-alias ql="qlmanage -p &>/dev/null"
 
 # Make executable
 alias makex="chmod a+x"
@@ -175,7 +158,7 @@ alias displays="system_profiler SPDisplaysDataType"
 alias cpuinfo="sysctl -n machdep.cpu.brand_string"
 alias cpu='top -o cpu'   # CPU
 alias mem='top -o rsize' # Memory
-alias qr="qrcode-terminal"
+alias qr="qrencode -t ANSI"
 alias datenow='date +%Y.%m.%d.%H%M%S'
 alias datenowUTC='date -u +%Y.%m.%d.%H%M%SZ'
 
