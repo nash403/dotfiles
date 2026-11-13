@@ -351,3 +351,13 @@ linux_machine() {
   [ "$status" -eq 0 ]
   grep -q "hostnamectl set-hostname from-uname" "$LOG"
 }
+
+@test "without DOTFILES_BRANCH, the repo's default branch is cloned" {
+  git -C "$REMOTE" branch -m main trunk
+  git -C "$REMOTE" symbolic-ref HEAD refs/heads/trunk
+  unset DOTFILES_BRANCH
+  install DOTFILES_YES=1
+  [ "$status" -eq 0 ]
+  [ "$(git -C "$HOME/dev/dotfiles" branch --show-current)" = trunk ]
+  [[ "$output" == *"(default branch)"* ]]
+}

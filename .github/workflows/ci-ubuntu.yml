@@ -1,12 +1,12 @@
 name: ci-ubuntu
 
 # Once per change: pull requests run the checks on their own; push only covers
-# master (its badge in the README) so a branch with an open PR is not checked
+# main (its badge in the README) so a branch with an open PR is not checked
 # twice. Any branch can be checked by hand from the Actions tab. Changes that
 # only touch Markdown files (docs) skip the checks.
 on:
   push:
-    branches: [master]
+    branches: [main]
     paths-ignore: ['**.md']
   pull_request:
     paths-ignore: ['**.md']

@@ -34,7 +34,7 @@ Then **sign in to the App Store app**: `make` installs App Store apps and cannot
 ### One command
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/nash403/dotfiles/master/install.sh | sh
+curl -fsSL https://raw.githubusercontent.com/nash403/dotfiles/main/install.sh | sh
 ```
 
 <details>
@@ -56,7 +56,7 @@ It shows a summary before changing anything, then clones, writes your answers an
 Set `DOTFILES_REPO` or `DOTFILES_BRANCH` before `sh`:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/nash403/dotfiles/master/install.sh | DOTFILES_REPO=https://github.com/you/dotfiles sh
+curl -fsSL https://raw.githubusercontent.com/nash403/dotfiles/main/install.sh | DOTFILES_REPO=https://github.com/you/dotfiles sh
 ```
 
 ```bash
@@ -65,10 +65,12 @@ curl -fsSL https://raw.githubusercontent.com/nash403/dotfiles/next/install.sh | 
 
 </details>
 
-### Then
+### Then, if you didn't let the wizard run `make`
+
+The wizard's last question is "Run make now?". If you answered yes, skip this step. Otherwise, run it from the clone:
 
 ```bash
-make
+cd ~/.dotfiles && make
 ```
 
 `make` installs Homebrew, links the dotfiles, installs the Brewfile (App Store apps included), the mise tools, the apps without a Homebrew cask, and oh-my-zsh. Open a new terminal afterwards.

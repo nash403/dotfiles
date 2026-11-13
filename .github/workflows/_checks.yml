@@ -51,7 +51,7 @@ jobs:
 
       - name: Install (unattended)
         run: |
-          # Without a local branch the clone would take master, which a PR
+          # Without a local branch the clone would take main, which a PR
           # checkout (detached HEAD) does not have.
           git switch -c ci-under-test
           ci_home=$(mktemp -d)

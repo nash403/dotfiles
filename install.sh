@@ -3,7 +3,7 @@
 # shellcheck disable=SC2088,SC2016
 # dotfiles installer and setup wizard.
 #
-#   curl -fsSL https://raw.githubusercontent.com/nash403/dotfiles/master/install.sh | sh
+#   curl -fsSL https://raw.githubusercontent.com/nash403/dotfiles/main/install.sh | sh
 #
 # Asks where to clone the repo, your dev and work folders, your git identity,
 # the machine name and whether to set up an SSH key, then clones and writes the
@@ -14,7 +14,7 @@
 #                     ask the questions, then print what would be done without
 #                     writing files or running commands (`make setup-dry`)
 #   DOTFILES_REPO     repo to clone (default: github.com/nash403/dotfiles)
-#   DOTFILES_BRANCH   branch to clone (default: master)
+#   DOTFILES_BRANCH   branch to clone (default: the repo's default branch)
 #   DOTFILES_YES=1    no questions: values come from DOTFILES_DIR, DEV_DIR,
 #                     WORK_DIR, GIT_NAME, GIT_EMAIL, defaults otherwise; the
 #                     machine name and SSH steps are skipped. DOTFILES_RUN_MAKE=1
@@ -23,7 +23,7 @@
 # POSIX sh on purpose: `curl … | sh` must work wherever sh exists.
 
 DOTFILES_REPO=${DOTFILES_REPO:-https://github.com/nash403/dotfiles.git}
-DOTFILES_BRANCH=${DOTFILES_BRANCH:-master}
+DOTFILES_BRANCH=${DOTFILES_BRANCH:-}
 DEFAULT_GIT_NAME="Honoré Nintunze"
 DEFAULT_GIT_EMAIL="nintu.lab@gmail.com"
 TOTAL_STAGES=9
@@ -345,7 +345,7 @@ stage_ssh() {
 
 stage_recap() {
   stage "Summary"
-  say "Clone            $DOTFILES_DIR ($DOTFILES_BRANCH)"
+  say "Clone            $DOTFILES_DIR (${DOTFILES_BRANCH:-default branch})"
   say "~/.dotfiles   →  $DOTFILES_DIR"
   say "Personal         $DEV_DIR"
   say "Work             $WORK_DIR"
@@ -401,8 +401,14 @@ apply_clone() {
     die "$DOTFILES_DIR exists and is not empty. Pick another folder."
   else
     act "mkdir -p $(dirname "$DOTFILES_DIR")" mkdir -p "$(dirname "$DOTFILES_DIR")"
-    act "git clone --branch $DOTFILES_BRANCH $DOTFILES_REPO $DOTFILES_DIR" \
-      git clone --branch "$DOTFILES_BRANCH" "$DOTFILES_REPO" "$DOTFILES_DIR" || die "git clone failed"
+    # No branch given: git takes the repo's default branch, whatever its name.
+    if [ -n "$DOTFILES_BRANCH" ]; then
+      act "git clone --branch $DOTFILES_BRANCH $DOTFILES_REPO $DOTFILES_DIR" \
+        git clone --branch "$DOTFILES_BRANCH" "$DOTFILES_REPO" "$DOTFILES_DIR" || die "git clone failed"
+    else
+      act "git clone $DOTFILES_REPO $DOTFILES_DIR" \
+        git clone "$DOTFILES_REPO" "$DOTFILES_DIR" || die "git clone failed"
+    fi
     ok "Cloned into $DOTFILES_DIR"
   fi
 }
