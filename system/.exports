@@ -32,6 +32,8 @@ export MANPAGER='less -X';
 
 # Docker
 # comment the following if not using colima
+# Then link the Colima socket to the default socket path. Note that this may break other Docker servers:
+# `sudo ln -sf $HOME/.colima/default/docker.sock /var/run/docker.sock`
 # export DOCKER_HOST="unix://${HOME}/.colima/default/docker.sock"
 
 # nvm
