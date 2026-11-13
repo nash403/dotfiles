@@ -5,9 +5,10 @@
 #
 #   curl -fsSL https://raw.githubusercontent.com/nash403/dotfiles/main/install.sh | sh
 #
-# Asks where to clone the repo, your dev and work folders, your git identity,
-# the machine name and whether to set up an SSH key, then clones and writes the
-# answers. Re-run it from a clone with `make setup`.
+# Asks where to clone the repo, your dev and work folders, the Dropbox folder for
+# the app settings backup (Mackup), your git identity, the machine name and
+# whether to set up an SSH key, then clones and writes the answers. Re-run it
+# from a clone with `make setup`.
 #
 # Options and environment variables:
 #   --dry-run, DOTFILES_DRY_RUN=1
@@ -16,9 +17,9 @@
 #   DOTFILES_REPO     repo to clone (default: github.com/nash403/dotfiles)
 #   DOTFILES_BRANCH   branch to clone (default: the repo's default branch)
 #   DOTFILES_YES=1    no questions: values come from DOTFILES_DIR, DEV_DIR,
-#                     WORK_DIR, GIT_NAME, GIT_EMAIL, defaults otherwise; the
-#                     machine name and SSH steps are skipped. DOTFILES_RUN_MAKE=1
-#                     also runs `make`.
+#                     WORK_DIR, MACKUP_DIR, GIT_NAME, GIT_EMAIL, defaults
+#                     otherwise; the machine name and SSH steps are skipped.
+#                     DOTFILES_RUN_MAKE=1 also runs `make`.
 #
 # POSIX sh on purpose: `curl … | sh` must work wherever sh exists.
 
@@ -26,7 +27,7 @@ DOTFILES_REPO=${DOTFILES_REPO:-https://github.com/nash403/dotfiles.git}
 DOTFILES_BRANCH=${DOTFILES_BRANCH:-}
 DEFAULT_GIT_NAME="Honoré Nintunze"
 DEFAULT_GIT_EMAIL="nintu.lab@gmail.com"
-TOTAL_STAGES=9
+TOTAL_STAGES=10
 
 # ──────────────────────────────────────────────────────────────────────────
 # Wizard helpers (ported from the /wizard skill template to POSIX sh)
@@ -187,6 +188,16 @@ env_default() {
   )
 }
 
+# dropbox_relative PATH: PATH relative to the Dropbox folder, as Mackup wants it.
+# Accepts "Backups/configs", "~/Dropbox/Backups/configs" or the full path.
+dropbox_relative() {
+  path=$1
+  for root in "~/Dropbox" "$HOME/Dropbox" "$HOME/Library/CloudStorage/Dropbox"; do
+    case "$path" in "$root" | "$root"/*) path=${path#"$root"} ;; esac
+  done
+  printf '%s' "$path" | sed -e 's#^/*##' -e 's#/*$##'
+}
+
 # repo_id URL: owner/name of a git URL, so https and ssh forms compare equal
 repo_id() {
   printf '%s' "$1" | sed -E -e 's#/+$##' -e 's#\.git$##' -e 's#^.*[:/]([^/:]+/[^/:]+)$#\1#'
@@ -266,6 +277,16 @@ stage_folders() {
   ask WORK_DIR "Work projects folder:" "${WORK_DIR:-$(env_default WORK_DIR)}"
   [ -n "$WORK_DIR" ] || WORK_DIR="~/work"
   WORK_DIR=$(expand_path "$WORK_DIR")
+}
+
+stage_backup() {
+  stage "App settings backup"
+  say "make mackup-backup copies the settings of the apps listed in mackup/mackup.cfg"
+  say "to a folder of your Dropbox; make mackup-restore copies them back. Nothing is"
+  say "copied now: this only records the folder."
+  ask MACKUP_DIR "Folder in Dropbox:" "${MACKUP_DIR:-$(env_default MACKUP_DIR)}"
+  MACKUP_DIR=$(dropbox_relative "$MACKUP_DIR")
+  [ -n "$MACKUP_DIR" ] || MACKUP_DIR=Mackup
 }
 
 stage_git() {
@@ -349,6 +370,7 @@ stage_recap() {
   say "~/.dotfiles   →  $DOTFILES_DIR"
   say "Personal         $DEV_DIR"
   say "Work             $WORK_DIR"
+  say "Settings backup  ~/Dropbox/$MACKUP_DIR (make mackup-backup)"
   say "git user.name    ${OLD_GIT_NAME:-(empty)} → $GIT_NAME"
   say "git user.email   ${OLD_GIT_EMAIL:-(empty)} → $GIT_EMAIL"
   if [ -n "${COMPUTER_NAME:-}" ]; then
@@ -469,6 +491,8 @@ env_file_content() {
   printf 'DOTFILES_DIR=%s\n' "$(shell_quote "$DOTFILES_DIR")"
   printf 'DEV_DIR=%s\n' "$(shell_quote "$DEV_DIR")"
   printf 'WORK_DIR=%s\n' "$(shell_quote "$WORK_DIR")"
+  # Relative to Dropbox, never under $HOME: plain quoting, not shell_quote.
+  printf 'MACKUP_DIR=%s\n' "$(single_quote "$MACKUP_DIR")"
   if [ -n "${COMPUTER_NAME:-}" ]; then
     printf 'COMPUTER_NAME=%s\n' "$(shell_quote "$COMPUTER_NAME")"
   fi
@@ -653,6 +677,8 @@ stage_next() {
     say "  cd $DOTFILES_DIR && make    # brew, App Store apps (mas), mise, oh-my-zsh, links"
   fi
   is_macos && say "  make macos                  # macOS defaults (optional, read macos/defaults.sh first)"
+  say "  make mackup-restore         # app settings from ~/Dropbox/$MACKUP_DIR: sign in to Dropbox"
+  say "                              # and let it sync first, then quit the apps"
   say "Then open a new terminal."
   say_cli_logins
 }
@@ -712,6 +738,7 @@ main() {
   stage_checks
   stage_clone_path
   stage_folders
+  stage_backup
   stage_git
   stage_machine
   stage_ssh

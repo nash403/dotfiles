@@ -53,6 +53,7 @@ navi = "latest"            # interactive cheatsheets
 pandoc = "latest"          # convert between document formats
 "pipx:httpie" = "latest"   # readable HTTP client (`http GET …`)
 "pipx:invoke" = "latest"   # Python task runner
+"pipx:mackup" = "latest"   # copies app configs to Dropbox (make mackup-backup)
 "github:n0-computer/sendme" = "latest"  # peer-to-peer file transfer (sendzip)
 "github:ksdme/ut" = "latest"            # developer toolbox (encodings, hashes, uuid…)
 yt-dlp = "latest"          # download audio/video

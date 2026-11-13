@@ -8,7 +8,7 @@ setup() {
   export HOME="$BATS_TEST_TMPDIR/home"
   mkdir -p "$HOME"
   export GIT_CONFIG_NOSYSTEM=1
-  unset DOTFILES_DIR DEV_DIR WORK_DIR GIT_NAME GIT_EMAIL COMPUTER_NAME DOTFILES_YES DOTFILES_RUN_MAKE
+  unset DOTFILES_DIR DEV_DIR WORK_DIR MACKUP_DIR GIT_NAME GIT_EMAIL COMPUTER_NAME DOTFILES_YES DOTFILES_RUN_MAKE
 
   # A tiny repo standing in for github.com/nash403/dotfiles
   REMOTE="$BATS_TEST_TMPDIR/remote/dotfiles"
@@ -139,8 +139,8 @@ answers() {
 }
 
 @test "interactive: machine name, new SSH key, signing and GitHub" {
-  #       ready  clone              dev   work  name       email       machine                 create key  sign platform recap gh   gh-sign make
-  answers ""     "~/dev/dotfiles"   ""    ""    "Ada L"    "ada@test"  "MacBook Pro d'Honoré"  y      ""   y    1        y     ""   ""      n
+  #       ready  clone              dev   work  backup name       email       machine                 create key  sign platform recap gh   gh-sign make
+  answers ""     "~/dev/dotfiles"   ""    ""    ""     "Ada L"    "ada@test"  "MacBook Pro d'Honoré"  y      ""   y    1        y     ""   ""      n
   install DOTFILES_TTY="$BATS_TEST_TMPDIR/tty"
   [ "$status" -eq 0 ]
   grep -q "scutil --set ComputerName MacBook Pro d'Honoré" "$LOG"
@@ -161,8 +161,8 @@ answers() {
   echo private >"$HOME/.ssh/id_ed25519"
   echo 'ssh-ed25519 AAAAOLD me@test' >"$HOME/.ssh/id_ed25519.pub"
   printf 'Host perso\n  HostName example.test\n' >"$HOME/.ssh/config"
-  #       ready clone dev work name email machine sign platform recap make
-  answers ""    ""    ""  ""   ""   ""    ""      n    4        y     n
+  #       ready clone dev work backup name email machine sign platform recap make
+  answers ""    ""    ""  ""   ""     ""   ""    ""      n    4        y     n
   install DOTFILES_TTY="$BATS_TEST_TMPDIR/tty"
   [ "$status" -eq 0 ]
   # `! cmd` never fails a bats test (set -e ignores it): check with run instead.
@@ -172,14 +172,14 @@ answers() {
   [ "$status" -ne 0 ]
   [ -z "$(git config --file "$HOME/.gitconfig" gpg.format)" ]
   head -1 "$HOME/.ssh/config" | grep -q "Host perso"
-  answers "" "" "" "" "" "" "" n 4 y n
+  answers "" "" "" "" "" "" "" "" n 4 y n
   install DOTFILES_TTY="$BATS_TEST_TMPDIR/tty"
   [ "$(grep -c 'Added by dotfiles install.sh' "$HOME/.ssh/config")" -eq 1 ]
 }
 
 @test "interactive: no SSH key at all" {
-  #       ready clone dev work name email machine create recap make
-  answers ""    ""    ""  ""   ""   ""    ""      n      y     n
+  #       ready clone dev work backup name email machine create recap make
+  answers ""    ""    ""  ""   ""     ""   ""    ""      n      y     n
   install DOTFILES_TTY="$BATS_TEST_TMPDIR/tty"
   [ "$status" -eq 0 ]
   [ ! -e "$HOME/.ssh/config" ]
@@ -187,8 +187,8 @@ answers() {
 }
 
 @test "interactive: GitLab on a self-hosted instance, with signing" {
-  #       ready clone dev work name email machine create name       sign platform url                         recap gitlab make
-  answers ""    ""    ""  ""   ""   ""    ""      y      id_ed25519_x y    2        "https://gitlab.example.test/" y     ""     n
+  #       ready clone dev work backup name email machine create name       sign platform url                         recap gitlab make
+  answers ""    ""    ""  ""   ""     ""   ""    ""      y      id_ed25519_x y    2        "https://gitlab.example.test/" y     ""     n
   install DOTFILES_TTY="$BATS_TEST_TMPDIR/tty"
   [ "$status" -eq 0 ]
   grep -q "open https://gitlab.example.test/-/user_settings/ssh_keys" "$LOG"
@@ -197,8 +197,8 @@ answers() {
 }
 
 @test "interactive: refusing the recap changes nothing" {
-  #       ready clone dev work name email machine create recap
-  answers ""    ""    ""  ""   ""   ""    ""      n      n
+  #       ready clone dev work backup name email machine create recap
+  answers ""    ""    ""  ""   ""     ""   ""    ""      n      n
   install DOTFILES_TTY="$BATS_TEST_TMPDIR/tty"
   [ "$status" -eq 1 ]
   [ ! -e "$HOME/.dotfiles" ]
@@ -241,8 +241,8 @@ answers() {
 
 @test "interactive: a long machine name gives a valid network name" {
   long="Un tres long nom de machine qui depasse largement la limite de soixante trois"
-  #       ready clone dev work name email machine create recap make
-  answers ""    ""    ""  ""   ""   ""    "$long" n      y     n
+  #       ready clone dev work backup name email machine create recap make
+  answers ""    ""    ""  ""   ""     ""   ""    "$long" n      y     n
   install DOTFILES_TTY="$BATS_TEST_TMPDIR/tty"
   [ "$status" -eq 0 ]
   host=$(sed -n 's/^scutil --set LocalHostName //p' "$LOG")
@@ -260,8 +260,8 @@ answers() {
 }
 
 @test "dry run, interactive: asks everything, runs no SSH or machine command" {
-  #       ready clone dev work name    email      machine     create name sign platform recap make
-  answers ""    ""    ""  ""   "Ada L" "ada@test" "Ada's Mac" y      ""   y    1        y
+  #       ready clone dev work backup name    email      machine     create name sign platform recap make
+  answers ""    ""    ""  ""   ""     "Ada L" "ada@test" "Ada's Mac" y      ""   y    1        y
   run env DOTFILES_TTY="$BATS_TEST_TMPDIR/tty" sh -s -- --dry-run <"$REPO_ROOT/install.sh"
   [ "$status" -eq 0 ]
   [ ! -s "$LOG" ]
@@ -279,8 +279,8 @@ answers() {
 }
 
 @test "interactive: the machine name defaults to the Mac's current name" {
-  #       ready clone dev work name email machine create recap make
-  answers ""    ""    ""  ""   ""   ""    ""      n      y     n
+  #       ready clone dev work backup name email machine create recap make
+  answers ""    ""    ""  ""   ""     ""   ""    ""      n      y     n
   install DOTFILES_TTY="$BATS_TEST_TMPDIR/tty"
   [ "$status" -eq 0 ]
   grep -q "scutil --set ComputerName Old Name" "$LOG"
@@ -295,8 +295,8 @@ answers() {
 }
 
 @test "the glab sign-in targets a self-hosted GitLab" {
-  #       ready clone dev work name email machine create name sign platform url                             recap gitlab make
-  answers ""    ""    ""  ""   ""   ""    ""      y      ""   n    2        "https://gitlab.example.test/x" y     ""     n
+  #       ready clone dev work backup name email machine create name sign platform url                             recap gitlab make
+  answers ""    ""    ""  ""   ""     ""   ""    ""      y      ""   n    2        "https://gitlab.example.test/x" y     ""     n
   install DOTFILES_TTY="$BATS_TEST_TMPDIR/tty"
   [ "$status" -eq 0 ]
   [[ "$output" == *"glab auth login --hostname gitlab.example.test"* ]]
@@ -314,8 +314,8 @@ linux_machine() {
 
 @test "Linux: the current hostname is the default, and is applied with hostnamectl" {
   linux_machine
-  #       ready chsh clone dev work name email machine create recap make
-  answers ""    n    ""    ""  ""   ""   ""    ""      n      y     n
+  #       ready chsh clone dev work backup name email machine create recap make
+  answers ""    n    ""    ""  ""   ""     ""   ""    ""      n      y     n
   install DOTFILES_TTY="$BATS_TEST_TMPDIR/tty" SHELL=/bin/bash
   [ "$status" -eq 0 ]
   grep -q "hostnamectl set-hostname old-box" "$LOG"
@@ -323,8 +323,8 @@ linux_machine() {
 
 @test "Linux: a new name becomes the hostname and the 127.0.1.1 entry" {
   linux_machine
-  #       ready chsh clone dev work name email machine          create recap make
-  answers ""    n    ""    ""  ""   ""   ""    "Shusui Desktop" n      y     n
+  #       ready chsh clone dev work backup name email machine          create recap make
+  answers ""    n    ""    ""  ""   ""     ""   ""    "Shusui Desktop" n      y     n
   install DOTFILES_TTY="$BATS_TEST_TMPDIR/tty" SHELL=/bin/bash
   [ "$status" -eq 0 ]
   grep -q "hostnamectl set-hostname Shusui-Desktop" "$LOG"
@@ -336,7 +336,7 @@ linux_machine() {
 @test "Linux: without a 127.0.1.1 entry, one is added" {
   linux_machine
   printf '127.0.0.1\tlocalhost\n' >"$HOSTS_FILE"
-  answers "" n "" "" "" "" "" "box2" n y n
+  answers "" n "" "" "" "" "" "" "box2" n y n
   install DOTFILES_TTY="$BATS_TEST_TMPDIR/tty" SHELL=/bin/bash
   [ "$status" -eq 0 ]
   [ "$(tail -1 "$HOSTS_FILE")" = "127.0.1.1	box2" ]
@@ -346,7 +346,7 @@ linux_machine() {
   linux_machine
   stub hostname 'exit 127'
   stub uname 'case "$1" in -s) echo Linux;; -n) echo from-uname;; *) /usr/bin/uname "$@";; esac'
-  answers "" n "" "" "" "" "" "" n y n
+  answers "" n "" "" "" "" "" "" "" n y n
   install DOTFILES_TTY="$BATS_TEST_TMPDIR/tty" SHELL=/bin/bash
   [ "$status" -eq 0 ]
   grep -q "hostnamectl set-hostname from-uname" "$LOG"
@@ -360,4 +360,35 @@ linux_machine() {
   [ "$status" -eq 0 ]
   [ "$(git -C "$HOME/dev/dotfiles" branch --show-current)" = trunk ]
   [[ "$output" == *"(default branch)"* ]]
+}
+
+@test "non-interactive: the Mackup backup folder defaults to Mackup" {
+  install DOTFILES_YES=1
+  [ "$status" -eq 0 ]
+  grep -qx "MACKUP_DIR='Mackup'" "$HOME/dev/dotfiles/custom/dotfiles.env"
+}
+
+@test "non-interactive: MACKUP_DIR is written without its leading and trailing slashes" {
+  install DOTFILES_YES=1 MACKUP_DIR="/Backups/configs/"
+  [ "$status" -eq 0 ]
+  grep -qx "MACKUP_DIR='Backups/configs'" "$HOME/dev/dotfiles/custom/dotfiles.env"
+}
+
+@test "non-interactive: a MACKUP_DIR given with the Dropbox path keeps only the part inside Dropbox" {
+  install DOTFILES_YES=1 MACKUP_DIR="~/Dropbox/Backups/configs"
+  grep -qx "MACKUP_DIR='Backups/configs'" "$HOME/dev/dotfiles/custom/dotfiles.env"
+  install DOTFILES_YES=1 MACKUP_DIR="$HOME/Library/CloudStorage/Dropbox/Mackup"
+  grep -qx "MACKUP_DIR='Mackup'" "$HOME/dev/dotfiles/custom/dotfiles.env"
+}
+
+@test "interactive: the Mackup backup folder is asked, shown in the recap and kept on a re-run" {
+  #       ready clone dev work backup        name email machine create recap make
+  answers ""    ""    ""  ""   "Sauvegardes" ""   ""    ""      n      y     n
+  install DOTFILES_TTY="$BATS_TEST_TMPDIR/tty"
+  [ "$status" -eq 0 ]
+  [[ "$output" == *"Dropbox/Sauvegardes"* ]]
+  grep -qx "MACKUP_DIR='Sauvegardes'" "$HOME/dev/dotfiles/custom/dotfiles.env"
+  answers "" "" "" "" "" "" "" "" n y n
+  install DOTFILES_TTY="$BATS_TEST_TMPDIR/tty"
+  grep -qx "MACKUP_DIR='Sauvegardes'" "$HOME/dev/dotfiles/custom/dotfiles.env"
 }

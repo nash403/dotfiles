@@ -8,7 +8,7 @@ export PATH := /opt/homebrew/bin:/home/linuxbrew/.linuxbrew/bin:$(HOME)/.local/b
 OS := $(shell uname -s)
 ARCH := $(shell uname -m)
 
-.PHONY: all homebrew link unlink detach backups brew mise apps ohmyzsh setup setup-dry workdirs macos test lint
+.PHONY: all homebrew link unlink detach backups brew mise apps ohmyzsh setup setup-dry workdirs macos mackup-backup mackup-restore mackup-dry test lint
 
 ifeq ($(OS),Darwin)
 all: homebrew link brew mise apps ohmyzsh
@@ -109,6 +109,19 @@ macos:
 	@if [ -r "$(DOTFILES_DIR)/custom/dotfiles.env" ]; then . "$(DOTFILES_DIR)/custom/dotfiles.env"; fi; \
 	COMPUTER_NAME="$${COMPUTER_NAME:-}" bash "$(DOTFILES_DIR)/macos/defaults.sh"
 
+# App settings <-> Dropbox folder chosen in the wizard, with Mackup (copy mode).
+# The app list is mackup/mackup.cfg; our definitions are in config/mackup/.
+mackup-backup:
+	@sh "$(DOTFILES_DIR)/scripts/mackup.sh" backup
+
+# Quit the apps first: a running app can overwrite its restored settings.
+mackup-restore:
+	@sh "$(DOTFILES_DIR)/scripts/mackup.sh" restore
+
+# What mackup-backup would copy, copying nothing
+mackup-dry:
+	@sh "$(DOTFILES_DIR)/scripts/mackup.sh" dry-run
+
 # `make test`, or one file: `make test T=test/functions/gwtaa.bats`
 T ?= -r test
 test:
@@ -116,7 +129,7 @@ test:
 	@command -v bats >/dev/null 2>&1 || { echo "make test: bats is missing, run: mise install" >&2; exit 1; }
 	bats --timing --print-output-on-failure $(T)
 
-SH_SCRIPTS := install.sh scripts/links.sh
+SH_SCRIPTS := install.sh scripts/links.sh scripts/mackup.sh
 BASH_SCRIPTS := bin/editor bin/install-dmg-app bin/is-executable bin/is-macos bin/is-supported macos/defaults.sh shell/init.bash shell/path.sh shell/exports.sh shell/aliases.sh
 ZSH_FILES := shell/init.zsh $(wildcard shell/functions/*.zsh) home/.zshrc home/.zprofile home/.zshenv
 lint:
