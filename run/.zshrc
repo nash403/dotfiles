@@ -165,7 +165,10 @@ source $HOMEBREW_PREFIX/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zs
 [[ -f ~/.config/tabtab/zsh/__tabtab.zsh ]] && . ~/.config/tabtab/zsh/__tabtab.zsh || true
 
 # Activate Mise to updates env var and PATH every time I prompt to ensure using the correct versions of tools
-eval "$(mise activate zsh)"
+eval "$(/Users/nash/.local/bin/mise activate zsh)"
+
+fpath+=('/Users/nash/.local/share/zsh/site-functions')
+autoload -Uz compinit && compinit
 
 ###
 # Secondary tools
@@ -177,10 +180,3 @@ if [ -f "/Users/$(whoami)/src/google-cloud-sdk/path.zsh.inc" ]; then . "/Users/$
 if [ -f "/Users/$(whoami)/src/google-cloud-sdk/completion.zsh.inc" ]; then . "/Users/$(whoami)/src/google-cloud-sdk/completion.zsh.inc"; fi
 
 test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
-
-
-PATH=~/.console-ninja/.bin:$PATH
-
-# Added by LM Studio CLI (lms)
-export PATH="$PATH:/Users/nash/.lmstudio/bin"
-# End of LM Studio CLI section
