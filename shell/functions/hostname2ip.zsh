@@ -1,0 +1,4 @@
+# Get IP from hostname
+hostname2ip() {
+  ping -c 1 "$1" | grep -E -m1 -o '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}'
+}

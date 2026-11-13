@@ -1,10 +1,6 @@
-[user]
-	name = Honoré Nitunze
-	email = nintu.lab@gmail.com
-	signingKey = ""
-
-[github]
-	user = nash403
+# Shared git settings, linked to ~/.config/git/config. Your identity, SSH
+# signing and per-folder includes live in ~/.gitconfig (written by the install
+# wizard, read after this file so it wins).
 
 [core]
 	excludesfile = ~/.config/git/ignore
@@ -22,35 +18,52 @@
 	lineNumber = true
 
 [help]
-	autocorrect = 1
-
-[gpg]
-	program = gpg
+	# Ask before running the command git guesses from a typo
+	autocorrect = prompt
 
 [init]
 	defaultBranch = main
-
-[commit]
-	gpgSign = false
-
-[tag]
-	forceSignAnnotated = false
 
 [pull]
 	rebase = true
 
 [push]
-	default = simple
 	followTags = true
+	# The first push of a branch creates its upstream, no --set-upstream needed
+	autoSetupRemote = true
 
 [fetch]
 	prune = true
 
-[diff]
-	tool = opendiff
+[rebase]
+	# Stash uncommitted changes during a rebase, restore them after
+	autoStash = true
+	# Also move the branches stacked on the rebased one (stacked PRs)
+	updateRefs = true
 
-[difftool "opendiff"]
-	cmd = /Users/nash/.dotfiles/bin/git-diff-cmd "$LOCAL" "$REMOTE"
+[rerere]
+	# Replay how a conflict was resolved when it comes back
+	enabled = true
+
+[diff]
+	# More readable diffs when code moves or lines repeat
+	algorithm = histogram
+
+[merge]
+	# Conflicts also show the common ancestor, without lines both sides share
+	conflictStyle = zdiff3
+
+[branch]
+	# `git branch` lists the most recently active branches first
+	sort = -committerdate
+
+[tag]
+	# v1.10 after v1.9
+	sort = version:refname
+
+[column]
+	# Lists in columns when it fits
+	ui = auto
 
 [alias]
 	amend = commit --amend --reuse-message=HEAD
@@ -74,7 +87,7 @@
 	st = status
 	stl = ls-files -m -o --exclude-standard
 	sts = status -sb
-	unstage = reset --hard HEAD
+	unstage = restore --staged
 
 [color]
 	ui = auto

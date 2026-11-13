@@ -1,0 +1,71 @@
+# Global tools, installed by `make mise`. Linked to ~/.config/mise/config.toml.
+# Private tools go in custom/mise.toml (linked to ~/.config/mise/conf.d/custom.toml).
+# Desktop apps and C libraries live in the Brewfile.
+
+[tools]
+# Languages and package managers
+bun = "latest"
+go = "latest"
+java = "temurin"
+node = "lts"
+pnpm = "latest"
+python = "3.12"            # global python3; per project: `mise use python@3.13`
+ruby = "3.3"
+rust = "latest"            # installed through rustup
+uv = "latest"              # Python dependencies and venvs per project
+yarn = "latest"
+viteplus = "latest"        # Vite+ toolchain
+
+# Git platforms and AI agents
+claude = "latest"          # Claude Code
+gh = "latest"              # GitHub CLI
+glab = "latest"            # GitLab CLI
+herdr = "latest"
+opencode = "latest"        # AI coding agent
+"github:sinclairtarget/git-who" = "latest"   # git blame for whole folders
+lazygit = "latest"         # git TUI
+pre-commit = "latest"      # git pre-commit hooks
+
+# Containers and Kubernetes (Docker without Docker Desktop)
+colima = "latest"          # lightweight VM running the Docker engine
+lima = "latest"            # VM layer used by colima
+docker-cli = "latest"      # docker command
+docker-compose = "latest"  # `docker compose` plugin
+"aqua:docker/buildx" = "latest"  # `docker buildx` plugin
+lazydocker = "latest"      # Docker TUI
+k9s = "latest"             # Kubernetes TUI
+kubectl = "latest"         # Kubernetes CLI (k alias); Docker Desktop used to provide it
+kubectx = "latest"         # switch Kubernetes context / namespace (ktx, kns)
+stern = "latest"           # tail logs of several pods
+
+# Cloud
+gcloud = "latest"          # Google Cloud CLI
+azure-cli = "latest"       # Azure CLI
+
+# Everyday command line
+fd = "latest"              # friendlier find
+fx = "latest"              # interactive JSON viewer
+fzf = "latest"             # fuzzy finder (oh-my-zsh fzf plugin)
+jq = "latest"              # JSON processor
+mkcert = "latest"          # locally trusted HTTPS certificates
+mole = "latest"            # clean up and optimize the Mac
+navi = "latest"            # interactive cheatsheets
+pandoc = "latest"          # convert between document formats
+"pipx:httpie" = "latest"   # readable HTTP client (`http GET …`)
+"pipx:invoke" = "latest"   # Python task runner
+"github:n0-computer/sendme" = "latest"  # peer-to-peer file transfer (sendzip)
+"github:ksdme/ut" = "latest"            # developer toolbox (encodings, hashes, uuid…)
+yt-dlp = "latest"          # download audio/video
+
+# Mobile and local AI
+cocoapods = "latest"       # iOS/macOS dependencies
+"github:Genymobile/scrcpy" = "latest"   # mirror and control an Android device
+ollama = "latest"          # run LLMs locally
+
+# Fun
+cowsay = "latest"
+"gem:lolcat" = "latest"
+
+[settings]
+# Activate the .venv uv creates when entering a Python project.
+python.uv_venv_auto = true

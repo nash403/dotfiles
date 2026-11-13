@@ -18,7 +18,7 @@ Thumbs.db
 !.vscode/settings.json
 
 node_modules/
-*.lock
-*.lock.json
 
-system/.custom
+# Private, machine-specific files (see custom/ headers)
+custom/*
+!custom/.gitkeep

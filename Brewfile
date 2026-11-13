@@ -1,126 +1,100 @@
-repo = 'popcorn-official/popcorn-desktop'
-tap repo, "https://github.com/#{repo}.git"
-tap 'ferdium/ferdium'
-# ENV['HOMEBREW_POPCORN_TIME_BUILD'] = 'false'
+# Homebrew: desktop apps, fonts, App Store apps, and the GNU tools and C libraries
+# mise does not provide. Command-line tools live in config/mise/config.toml.
+# Private apps go in custom/Brewfile, installed by `make brew` too.
 
-tap 'homebrew/bundle'
-tap 'homebrew/cask-drivers'
-tap 'homebrew/cask-fonts'
-tap 'homebrew/cask-versions'
-tap 'homebrew/cask'
-tap 'homebrew/core'
-tap 'homebrew/services'
-# tap 'jesseduffield/lazydocker'
+# Formulae
+brew 'ack'                       # grep for code
+brew 'coreutils'                 # GNU ls, cp, date…
+brew 'diff-so-fancy'             # readable git diffs (core.pager)
+brew 'docker-credential-helper'  # docker login credentials in the macOS keychain
+brew 'exiftool'                  # read and write image metadata
+brew 'ffmpeg'                    # convert and record audio/video
+brew 'findutils'                 # GNU find, xargs
+brew 'fortune'                   # random quotes (cowcat alias)
+brew 'git'                       # recent git
+brew 'git-extras'                # extra git commands (git summary…)
+brew 'gnu-sed'                   # GNU sed
+brew 'grep'                      # GNU grep
+brew 'imagemagick'               # image manipulation
+brew 'libpq'                     # psql client without a Postgres server
+brew 'libyaml'                   # needed to build mise's Ruby
+brew 'moreutils'                 # sponge, ts, vipe…
+brew 'nano'                      # recent nano, with syntax files
+brew 'ngrep'                     # grep network traffic (sniff alias)
+brew 'nss'                       # lets mkcert install its CA in Firefox
+brew 'openssl@3'                 # needed to build mise's Ruby
+brew 'qrencode'                  # QR codes in the terminal (qr alias)
+brew 'spaceship'                 # zsh prompt
+brew 'tree'                      # directory trees
+brew 'wget'                      # downloads
+brew 'zsh-syntax-highlighting'   # colors commands as you type
 
-brew 'ack'
-# brew 'amir20/homebrew-dtop/dtop'
-# brew 'azure-cli'
-brew 'bash-completion@2'
-brew 'bats'
-brew 'brew-cask-completion'
-# brew 'cocoapods'
-# brew 'colima'
-# brew 'coreutils'
-# brew 'cowsay'
-# brew 'derailed/k9s/k9s'
-brew 'diff-so-fancy'
-# brew 'exiftool'
-brew 'ferdium'
-brew 'fortune'
-brew 'ffmpeg'
-brew 'findutils'
-# brew 'fd'
-# brew 'fx'
-# brew 'fzf'
-brew 'git'
-# brew 'git-who'
-brew 'gnu-sed'
-brew 'grep'
-brew 'httpie'
-# brew 'imagemagick'
-# brew 'jq'
-# brew 'kdash-rs/kdash'
-brew 'ksdme/tap/ut'
-# brew 'kubectx'
-# brew 'lazydocker'
-# brew 'lazygit'
-brew 'libpq'
-# brew 'mas'
-brew 'mkcert'
-brew 'moreutils'
-brew 'nano'
-brew 'ngrep'
-brew 'nss'
-brew 'openssh'
-brew 'pandoc'
-# brew 'redis'
-brew 'ssh-copy-id'
-# brew 'stern'
-brew 'sendme'
-brew 'stow'
-brew 'tldr'
-brew 'tree'
-brew 'wget'
-# brew 'yt-dlp'
-brew 'zsh-syntax-highlighting'
+if OS.mac?
+  brew 'mas'                     # installs the App Store apps below
+  brew 'wifi-password'           # shows the current Wi-Fi password
 
-cask 'adapter'
-cask 'adobe-acrobat-reader'
-cask 'aerial'
-cask 'airflow'
-cask 'alfred'
-cask 'android-file-transfer'
-cask 'betterzip'
-cask 'cakebrew'
-cask 'calibre'
-cask 'cardinal-search'
-cask 'cryptomator'
-cask 'cyberduck'
-cask 'discord'
-cask 'docker'
-cask 'dropbox'
-cask 'enpass'
-cask 'firefox'
-cask 'font-fira-code'
-cask 'font-karla'
-cask 'font-meslo-for-powerline'
-cask 'font-meslo-lg'
-cask 'font-meslo-nerd-font-mono'
-cask 'font-meslo-nerd-font'
-cask 'font-mononoki'
-cask 'font-roboto'
-# cask 'gitkraken' # use vscode git lens
-cask 'google-chrome'
-cask 'imageoptim'
-cask 'insomnia'
-cask 'iterm2'
-# cask 'lens' # use alternative like derailed/k9s/k9s (buggy?) or kdash-rs/kdash
-cask 'ngrok'
-cask 'popcorn-time' # , args: { 'no-quarantine': true }
-cask 'provisionql'
-cask 'qlcolorcode'
-cask 'qlimagesize'
-cask 'qlmarkdown'
-cask 'qlstephen'
-cask 'qlvideo'
-cask 'quicklook-csv'
-cask 'quicklook-json'
-# cask 'rambox' # use 'ferdium' instead
-cask 'sublime-text'
-cask 'suspicious-package'
-cask 'syntax-highlight'
-cask 'the-unarchiver'
-cask 'virtualbox'
-cask 'visual-studio-code'
-cask 'vlc'
+  tap 'rajivm1991/droiddock'
+  # Popcorn Time: neither the cask nor its tap exist anymore.
+  # cask 'popcorn-time'
 
-mas 'Amphetamine', id: 937984704
-mas 'Color Juicer', id: 1191209926
-mas 'Color Picker', id: 1545870783
-mas 'Dato', id: 1470584107
-mas 'Gapplin', id: 768053424
-mas 'Goodnotes', id: 1444383602
-mas 'MegaIPTVmacOS', id: 1494386779
-mas 'Pixea', id: 1507782672
-mas 'QuickDrop', id: 6740147178
-mas 'Xcode', id: 497799835
+  # Apps
+  cask 'adapter'               # convert video, audio and images
+  cask 'adobe-acrobat-reader'  # PDF reader
+  cask 'aerial'                # Apple TV screensaver
+  cask 'airflow'               # stream videos to Apple TV / Chromecast
+  cask 'alfred'                # launcher and workflows
+  cask 'apparency'             # inspect app bundles
+  cask 'background-music'      # per-app volume, system audio recording
+  cask 'betterzip'             # create and edit archives
+  cask 'calibre'               # e-book library
+  cask 'cardinal-search'       # fast file search
+  cask 'cryptomator'           # encrypt cloud files
+  cask 'cyberduck'             # FTP/SFTP/S3 browser
+  cask 'dash'                  # offline API docs
+  cask 'discord'               # chat
+  cask 'droiddock'             # Android device manager
+  cask 'dropbox'               # cloud storage
+  cask 'enpass'                # password manager
+  cask 'ferdium'               # all messaging apps in one window
+  cask 'firefox'               # browser
+  cask 'ghostty'               # terminal
+  cask 'google-chrome'         # browser
+  cask 'imageoptim'            # compress images
+  cask 'insomnia'              # HTTP/GraphQL client
+  cask 'linear'                # issue tracking
+  cask 'mole-app'              # clean up and monitor the Mac
+  cask 'ngrok'                 # expose a local port
+  cask 'notion'                # notes and docs
+  cask 'opencode-desktop'      # opencode desktop client
+  cask 'slack'                 # team chat
+  cask 'superwhisper'          # dictation with AI rewording
+  cask 'suspicious-package'    # inspect .pkg installers
+  cask 'the-unarchiver'        # extract archives
+  cask 'visual-studio-code'    # editor
+  cask 'vlc'                   # media player
+  cask 'whatsapp'              # messaging
+  cask 'zed'                   # editor
+
+  # Quick Look previews
+  cask 'qlmarkdown'            # Markdown
+  cask 'quicklook-video'       # videos
+  cask 'syntax-highlight'      # source code, JSON and other text files
+
+  # Fonts
+  cask 'font-fira-code'
+  cask 'font-karla'
+  cask 'font-meslo-for-powerline'
+  cask 'font-meslo-lg'
+  cask 'font-meslo-lg-nerd-font'
+  cask 'font-mononoki'
+  cask 'font-roboto'
+
+  # App Store (sign in to the App Store app first)
+  mas 'Amphetamine', id: 937984704      # keep the Mac awake
+  mas 'Color Juicer', id: 1191209926    # color picker
+  mas 'Color Picker', id: 1545870783    # color picker
+  mas 'Dato', id: 1470584107            # calendar in the menu bar
+  mas 'Goodnotes', id: 1444383602       # handwritten notes
+  mas 'Xcode', id: 497799835
+  mas 'Zen IPTV', id: 6458223193        # IPTV player
+end

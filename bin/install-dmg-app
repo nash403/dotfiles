@@ -1,0 +1,77 @@
+#!/usr/bin/env bash
+# install-dmg-app OWNER/REPO ASSET_REGEX APP_NAME.app
+#
+# Install a macOS app that has no Homebrew cask from the .dmg published on its
+# GitHub releases: the newest release with an asset matching ASSET_REGEX wins.
+# Skipped when the app is already installed (these apps update themselves).
+#
+# Checks, once the .dmg is mounted:
+#   - codesign --verify --deep --strict must pass: it catches a modified or
+#     corrupted app, and accepts an app its author signed without notarizing.
+#   - spctl --assess (Gatekeeper) is only a warning: asks in a terminal, skips
+#     the app otherwise, installs without asking when FORCE=1. The copied app
+#     has no quarantine flag, so this question replaces Gatekeeper's prompt.
+set -euo pipefail
+
+if [[ $# -ne 3 ]]; then
+  echo "usage: install-dmg-app OWNER/REPO ASSET_REGEX APP_NAME.app" >&2
+  exit 2
+fi
+repo="$1" pattern="$2" app="$3"
+apps_dir="${APPS_DIR:-/Applications}"
+
+if [[ -e "$apps_dir/$app" ]]; then
+  echo "$app already installed"
+  exit 0
+fi
+
+url=$(curl -fsSL "https://api.github.com/repos/$repo/releases?per_page=30" |
+  grep -oE '"browser_download_url": *"[^"]+"' |
+  sed -E 's/.*"(https[^"]+)"$/\1/' |
+  grep -E "$pattern" | head -1) || true
+if [[ -z "$url" ]]; then
+  echo "$app: no release of $repo has a file matching $pattern" >&2
+  exit 1
+fi
+
+tmp=$(mktemp -d)
+mnt="$tmp/mnt"
+cleanup() {
+  [[ -d "$mnt" ]] && hdiutil detach -quiet "$mnt" >/dev/null 2>&1 || true
+  rm -rf "$tmp"
+}
+trap cleanup EXIT
+
+echo "$app: downloading $url"
+curl -fsSL -o "$tmp/app.dmg" "$url"
+mkdir -p "$mnt"
+hdiutil attach -nobrowse -readonly -quiet -mountpoint "$mnt" "$tmp/app.dmg"
+
+if [[ ! -d "$mnt/$app" ]]; then
+  echo "$app: not found in the disk image" >&2
+  exit 1
+fi
+
+if ! codesign --verify --deep --strict "$mnt/$app"; then
+  echo "$app: broken signature, not installed" >&2
+  exit 1
+fi
+
+if ! spctl --assess --type execute "$mnt/$app" 2>/dev/null; then
+  echo "$app: Gatekeeper rejects this app (not notarized by Apple)."
+  if [[ "${FORCE:-}" == 1 ]]; then
+    echo "$app: FORCE=1, installing anyway"
+  elif [[ -t 0 ]]; then
+    read -r -p "Install anyway? [y/N] " answer
+    [[ "$answer" =~ ^[yY] ]] || {
+      echo "$app: skipped"
+      exit 0
+    }
+  else
+    echo "$app: skipped. To install it anyway: make apps FORCE=1"
+    exit 0
+  fi
+fi
+
+cp -R "$mnt/$app" "$apps_dir/"
+echo "$app installed in $apps_dir"

@@ -1,0 +1,11 @@
+name: ci-ubuntu
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  checks:
+    uses: ./.github/workflows/_checks.yml
+    with:
+      os: ubuntu-latest

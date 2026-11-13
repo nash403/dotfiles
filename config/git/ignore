@@ -1,6 +1,13 @@
 *~
 ._*
 .DS_Store
+.AppleDouble
+.LSOverride
+.fseventsd
+.Spotlight-V100
+.Trashes
+# macOS custom folder icons: "Icon" must end with two carriage returns
+Icon
 
 # Local env files
 .env
@@ -8,17 +15,13 @@
 !.env.example
 .env*.local
 
-# Editor directories and files
-.idea
-.vscode
+# Editor directories and files (.vscode is left to each project's .gitignore)
+.idea/
+*.swp
 *.suo
 *.ntvs*
 *.njsproj
 *.sln
-.vscode/*
-!.vscode/settings.json.sample
-!.vscode/extensions.json
-
 
 node_modules
 bower_components
@@ -28,4 +31,13 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
+# Python
+__pycache__/
+.venv/
+
+# Personal, machine-local files
 **/.claude/settings.local.json
+.my-context/
+CLAUDE.local.md
+mise.local.toml
+.mise.local.toml

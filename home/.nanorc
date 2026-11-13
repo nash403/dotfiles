@@ -1,0 +1,16 @@
+# Settings for the `nano` editor. Full list: `man nanorc`.
+
+# Syntax highlighting for most file types (Homebrew's nano)
+include "/opt/homebrew/share/nano/*.nanorc"
+
+# Tab inserts spaces
+set tabstospaces
+# Line numbers in the margin
+set linenumbers
+# A new line keeps the indentation of the previous one
+set autoindent
+# Long lines wrap on screen, between words, without being cut in the file
+set softwrap
+set atblanks
+# Always show the cursor's line and column
+set constantshow
