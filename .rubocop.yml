@@ -1,0 +1,5 @@
+# Brewfile is Ruby, but `mas` ids are App Store identifiers, not quantities:
+# keep them as copied from `mas search` / `mas list`.
+Style/NumericLiterals:
+  Exclude:
+    - Brewfile
