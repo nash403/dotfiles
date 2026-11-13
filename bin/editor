@@ -2,10 +2,10 @@
 
 case "$1" in
 	*_EDITMSG|*MERGE_MSG|*_TAGMSG )
-		code -a "$1"
+		zed --wait "$1"
 		;;
 	*.md )
-		mdless "$1"
+		scratch "$1"
 		;;
 	*.txt )
 		nano "$1"
