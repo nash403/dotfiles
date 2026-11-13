@@ -9,5 +9,6 @@ setup() { F="$REPO_ROOT/shell/functions/calc.zsh"; }
 
 @test "reports a malformed expression" {
   run zrun "$F" calc '2 *'
-  [ "$status" -ne 0 ]
+  # GNU bc (Linux) exits 0 on a syntax error, macOS bc exits 2: check the message
+  [[ "$output" == *[Ee]rror* ]]
 }
