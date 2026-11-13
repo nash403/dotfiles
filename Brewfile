@@ -1,128 +1,126 @@
-repo = "popcorn-official/popcorn-desktop"
+repo = 'popcorn-official/popcorn-desktop'
 tap repo, "https://github.com/#{repo}.git"
-tap ferdium/ferdium
-#ENV["HOMEBREW_POPCORN_TIME_BUILD"] = "false"
+tap 'ferdium/ferdium'
+# ENV['HOMEBREW_POPCORN_TIME_BUILD'] = 'false'
 
-tap "homebrew/bundle"
-tap "homebrew/cask-drivers"
-tap "homebrew/cask-fonts"
-tap "homebrew/cask-versions"
-tap "homebrew/cask"
-tap "homebrew/core"
-tap "homebrew/services"
-tap "jesseduffield/lazydocker"
+tap 'homebrew/bundle'
+tap 'homebrew/cask-drivers'
+tap 'homebrew/cask-fonts'
+tap 'homebrew/cask-versions'
+tap 'homebrew/cask'
+tap 'homebrew/core'
+tap 'homebrew/services'
+# tap 'jesseduffield/lazydocker'
 
-brew "ack"
-brew "amir20/homebrew-dtop/dtop"
-brew "azure-cli"
-brew "bash-completion@2"
-brew "bats"
-brew "brew-cask-completion"
-brew "cocoapods"
-brew "colima"
-brew "coreutils"
-# brew "derailed/k9s/k9s"
-brew "diff-so-fancy"
-brew "exiftool"
-brew "ferdium"
-brew "ffmpeg"
-brew "findutils"
-brew "fx"
-brew "fzf"
-brew "git"
-brew "git-who"
-brew "gnu-sed"
-brew "grep"
-brew "httpie"
-brew "imagemagick"
-brew "jq"
-brew "kdash-rs/kdash"
-brew "ksdme/tap/ut"
-brew "kubectx"
-brew "lazydocker"
-brew "lazygit"
-brew "libpq"
-brew "mackup"
-brew "mas"
-brew "mise"
-brew "mkcert"
-brew "moreutils"
-brew "nano"
-brew "navi"
-brew "ngrep"
-brew "nss"
-brew "openssh"
-brew "pandoc"
-# brew "pnpm" # use mise
-# brew "pyenv"  # use mise
-# brew "python" # use mise
-brew "redis"
-brew "ssh-copy-id"
-brew "stern"
-brew "stow"
-brew "tldr"
-brew "tree"
-brew "wget"
-brew "yt-dlp"
-brew "zsh-syntax-highlighting"
+brew 'ack'
+# brew 'amir20/homebrew-dtop/dtop'
+# brew 'azure-cli'
+brew 'bash-completion@2'
+brew 'bats'
+brew 'brew-cask-completion'
+# brew 'cocoapods'
+# brew 'colima'
+# brew 'coreutils'
+# brew 'cowsay'
+# brew 'derailed/k9s/k9s'
+brew 'diff-so-fancy'
+# brew 'exiftool'
+brew 'ferdium'
+brew 'fortune'
+brew 'ffmpeg'
+brew 'findutils'
+# brew 'fd'
+# brew 'fx'
+# brew 'fzf'
+brew 'git'
+# brew 'git-who'
+brew 'gnu-sed'
+brew 'grep'
+brew 'httpie'
+# brew 'imagemagick'
+# brew 'jq'
+# brew 'kdash-rs/kdash'
+brew 'ksdme/tap/ut'
+# brew 'kubectx'
+# brew 'lazydocker'
+# brew 'lazygit'
+brew 'libpq'
+# brew 'mas'
+brew 'mkcert'
+brew 'moreutils'
+brew 'nano'
+brew 'ngrep'
+brew 'nss'
+brew 'openssh'
+brew 'pandoc'
+# brew 'redis'
+brew 'ssh-copy-id'
+# brew 'stern'
+brew 'sendme'
+brew 'stow'
+brew 'tldr'
+brew 'tree'
+brew 'wget'
+# brew 'yt-dlp'
+brew 'zsh-syntax-highlighting'
 
-cask "adapter"
-cask "adobe-acrobat-reader"
-cask "aerial"
-cask "airflow"
-cask "alfred"
-cask "android-file-transfer"
-cask "betterzip"
-cask "cakebrew"
-cask "calibre"
-cask "cardinal-search"
-cask "cryptomator"
-cask "cyberduck"
-cask "discord"
-cask "docker"
-cask "dropbox"
-cask "enpass"
-cask "firefox"
-cask "font-fira-code"
-cask "font-karla"
-cask "font-meslo-for-powerline"
-cask "font-meslo-lg"
-cask "font-meslo-nerd-font-mono"
-cask "font-meslo-nerd-font"
-cask "font-mononoki"
-cask "font-roboto"
-# cask "gitkraken" # use vscode git lens
-cask "google-chrome"
-cask "imageoptim"
-cask "insomnia"
-cask "iterm2"
-# cask "lens" # use alternative like derailed/k9s/k9s (buggy?) or kdash-rs/kdash
-cask "ngrok"
-cask "popcorn-time" #, args: { "no-quarantine": true }
-cask "provisionql"
-cask "qlcolorcode"
-cask "qlimagesize"
-cask "qlmarkdown"
-cask "qlstephen"
-cask "qlvideo"
-cask "quicklook-csv"
-cask "quicklook-json"
-# cask "rambox" # use "ferdium" instead
-cask "sublime-text"
-cask "suspicious-package"
-cask "syntax-highlight"
-cask "the-unarchiver"
-cask "virtualbox"
-cask "visual-studio-code"
-cask "vlc"
+cask 'adapter'
+cask 'adobe-acrobat-reader'
+cask 'aerial'
+cask 'airflow'
+cask 'alfred'
+cask 'android-file-transfer'
+cask 'betterzip'
+cask 'cakebrew'
+cask 'calibre'
+cask 'cardinal-search'
+cask 'cryptomator'
+cask 'cyberduck'
+cask 'discord'
+cask 'docker'
+cask 'dropbox'
+cask 'enpass'
+cask 'firefox'
+cask 'font-fira-code'
+cask 'font-karla'
+cask 'font-meslo-for-powerline'
+cask 'font-meslo-lg'
+cask 'font-meslo-nerd-font-mono'
+cask 'font-meslo-nerd-font'
+cask 'font-mononoki'
+cask 'font-roboto'
+# cask 'gitkraken' # use vscode git lens
+cask 'google-chrome'
+cask 'imageoptim'
+cask 'insomnia'
+cask 'iterm2'
+# cask 'lens' # use alternative like derailed/k9s/k9s (buggy?) or kdash-rs/kdash
+cask 'ngrok'
+cask 'popcorn-time' # , args: { 'no-quarantine': true }
+cask 'provisionql'
+cask 'qlcolorcode'
+cask 'qlimagesize'
+cask 'qlmarkdown'
+cask 'qlstephen'
+cask 'qlvideo'
+cask 'quicklook-csv'
+cask 'quicklook-json'
+# cask 'rambox' # use 'ferdium' instead
+cask 'sublime-text'
+cask 'suspicious-package'
+cask 'syntax-highlight'
+cask 'the-unarchiver'
+cask 'virtualbox'
+cask 'visual-studio-code'
+cask 'vlc'
 
-mas "Amphetamine", id: 937984704
-mas "Color Juicer", id: 1191209926
-mas "Color Picker", id: 1545870783
-mas "Dato", id: 1470584107
-mas "Gapplin", id: 768053424
-mas "Goodnotes", id: 1444383602
-mas "MegaIPTVmacOS", id: 1494386779
-mas "Pixea", id: 1507782672
-mas "QuickDrop", id: 6740147178
-mas "Xcode", id: 497799835
+mas 'Amphetamine', id: 937984704
+mas 'Color Juicer', id: 1191209926
+mas 'Color Picker', id: 1545870783
+mas 'Dato', id: 1470584107
+mas 'Gapplin', id: 768053424
+mas 'Goodnotes', id: 1444383602
+mas 'MegaIPTVmacOS', id: 1494386779
+mas 'Pixea', id: 1507782672
+mas 'QuickDrop', id: 6740147178
+mas 'Xcode', id: 497799835
