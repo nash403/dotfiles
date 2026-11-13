@@ -1,0 +1,110 @@
+# Shared checks, called by ci-macos.yml and ci-ubuntu.yml (one badge each).
+name: checks
+
+on:
+  workflow_call:
+    inputs:
+      os:
+        required: true
+        type: string
+
+jobs:
+  checks:
+    runs-on: ${{ inputs.os }}
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Setup
+        run: |
+          if [ "$RUNNER_OS" = Linux ]; then command -v zsh || { sudo apt-get update && sudo apt-get install -y zsh; }; fi
+          curl -fsSL https://mise.run | sh
+          echo "$HOME/.local/bin" >>"$GITHUB_PATH"
+          echo "$HOME/.local/share/mise/shims" >>"$GITHUB_PATH"
+          export PATH="$HOME/.local/bin:$PATH"
+          mise trust && mise install
+
+      - name: Lint
+        run: |
+          set -o pipefail
+          make lint | tee lint.log
+          {
+            echo "### Lint"
+            sed 's/^/- /' lint.log
+          } >>"$GITHUB_STEP_SUMMARY"
+
+      - name: Tests
+        run: |
+          status=0
+          {
+            echo "### Tests"
+            echo "| File | Passed | Failed |"
+            echo "|---|---|---|"
+          } >>"$GITHUB_STEP_SUMMARY"
+          for file in $(find test -name '*.bats' | sort); do
+            out=$(make --no-print-directory test T="--formatter tap $file" 2>&1) || status=1
+            printf '%s\n' "$out"
+            passed=$(printf '%s\n' "$out" | grep -c '^ok ' || true)
+            failed=$(printf '%s\n' "$out" | grep -c '^not ok ' || true)
+            echo "| \`$file\` | $passed | $failed |" >>"$GITHUB_STEP_SUMMARY"
+          done
+          exit "$status"
+
+      - name: Install (unattended)
+        run: |
+          # Without a local branch the clone would take master, which a PR
+          # checkout (detached HEAD) does not have.
+          git switch -c ci-under-test
+          ci_home=$(mktemp -d)
+          echo "CI_HOME=$ci_home" >>"$GITHUB_ENV"
+          HOME="$ci_home" DOTFILES_YES=1 \
+            DOTFILES_REPO="file://$GITHUB_WORKSPACE" DOTFILES_BRANCH=ci-under-test \
+            DEV_DIR=code GIT_NAME="CI Bot" GIT_EMAIL=ci@example.test \
+            sh <install.sh
+
+      - name: Check the install
+        run: |
+          failed=0
+          check() {
+            if eval "$2"; then line="✓ $1"; else line="✗ $1"; failed=1; fi
+            echo "$line"
+            echo "- $line" >>"$GITHUB_STEP_SUMMARY"
+          }
+          echo "### Install" >>"$GITHUB_STEP_SUMMARY"
+          env_file="$CI_HOME/dev/dotfiles/custom/dotfiles.env"
+          check "~/.dotfiles points to the clone" '[ "$(readlink "$CI_HOME/.dotfiles")" = "$CI_HOME/dev/dotfiles" ]'
+          check "the clone is on the tested branch" '[ "$(git -C "$CI_HOME/dev/dotfiles" branch --show-current)" = ci-under-test ]'
+          check "dotfiles.env holds the dev folder given" "grep -qxF 'DEV_DIR=\"\$HOME\"'\\''/code'\\''' \"$env_file\""
+          check "dev and work folders created" '[ -d "$CI_HOME/code" ] && [ -d "$CI_HOME/work" ]'
+          check "user.name in ~/.gitconfig" '[ "$(git config --file "$CI_HOME/.gitconfig" user.name)" = "CI Bot" ]'
+          check "user.email in ~/.gitconfig" '[ "$(git config --file "$CI_HOME/.gitconfig" user.email)" = ci@example.test ]'
+          check "SSH step skipped" '[ ! -e "$CI_HOME/.ssh" ]'
+          check "machine name not written" '! grep -q COMPUTER_NAME "$env_file"'
+          exit "$failed"
+
+      # A real Ubuntu, for what the bats tests can only fake: hostnamectl and
+      # /etc/hosts. The unattended install above skips the machine name, so the
+      # wizard runs interactively here, its answers read from a file.
+      - name: Machine name on a real Ubuntu
+        if: runner.os == 'Linux'
+        run: |
+          answers=$(mktemp)
+          #                      ready chsh clone dev work name email machine         create recap make
+          printf '%s\n' "" n "" "" "" "" "" "CI Wizard Box" n y n >"$answers"
+          wizard_home=$(mktemp -d)
+          HOME="$wizard_home" SHELL=/bin/bash DOTFILES_TTY="$answers" \
+            DOTFILES_REPO="file://$GITHUB_WORKSPACE" DOTFILES_BRANCH=ci-under-test \
+            sh <install.sh
+
+          failed=0
+          check() {
+            if eval "$2"; then line="✓ $1"; else line="✗ $1"; failed=1; fi
+            echo "$line"
+            echo "- $line" >>"$GITHUB_STEP_SUMMARY"
+          }
+          echo "### Machine name (Ubuntu)" >>"$GITHUB_STEP_SUMMARY"
+          check "hostname is CI-Wizard-Box" '[ "$(hostname)" = CI-Wizard-Box ]'
+          check "hostnamectl reports it" '[ "$(hostnamectl hostname 2>/dev/null || hostnamectl --static)" = CI-Wizard-Box ]'
+          check "/etc/hosts maps 127.0.1.1 to it" 'grep -Eq "^127\.0\.1\.1[[:space:]]+CI-Wizard-Box$" /etc/hosts'
+          check "sudo does not warn about the host" '! sudo true 2>&1 | grep -q "unable to resolve host"'
+          check "dotfiles.env keeps the name" "grep -q \"^COMPUTER_NAME='CI Wizard Box'\" \"$wizard_home/dev/dotfiles/custom/dotfiles.env\""
+          exit "$failed"

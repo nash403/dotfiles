@@ -1,92 +1,126 @@
-DOTFILES_DIR := $(dir $(realpath $(firstword $(MAKEFILE_LIST))))
-export STOW_DIR := $(DOTFILES_DIR)
+# `make` installs everything. See the README for the other targets.
+
+SHELL := /bin/sh
+DOTFILES_DIR := $(patsubst %/,%,$(dir $(realpath $(firstword $(MAKEFILE_LIST)))))
 export XDG_CONFIG_HOME := $(HOME)/.config
-OS := $(shell bin/is-supported bin/is-macos macos linux)
-PATH := $(DOTFILES_DIR)/bin:$(PATH)
-NVM_DIR := $(HOME)/.config/nvm
+# Tools installed earlier in the same `make` run must be found by later steps.
+export PATH := /opt/homebrew/bin:/home/linuxbrew/.linuxbrew/bin:$(HOME)/.local/bin:$(HOME)/.local/share/mise/shims:$(DOTFILES_DIR)/bin:$(PATH)
+OS := $(shell uname -s)
+ARCH := $(shell uname -m)
 
-.PHONY: test
+.PHONY: all homebrew link unlink detach backups brew mise apps ohmyzsh setup setup-dry workdirs macos test lint
 
-all: workdirs $(OS)
+ifeq ($(OS),Darwin)
+all: homebrew link brew mise apps ohmyzsh
+else
+all: homebrew link brew mise ohmyzsh
+endif
 
-macos: sudo core-macos packages link
+# Homebrew itself
+homebrew:
+	@command -v brew >/dev/null 2>&1 || NONINTERACTIVE=1 /bin/bash -c "$$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
-linux: core-linux link
+# Symlinks home/ -> ~ and config/ -> ~/.config (see scripts/links.sh)
+link:
+	@sh "$(DOTFILES_DIR)/scripts/links.sh" link
 
-core-macos: brew git node pnpm ruby
+unlink:
+	@sh "$(DOTFILES_DIR)/scripts/links.sh" unlink
 
-core-linux:
-	apt-get update
-	apt-get upgrade -y
-	apt-get dist-upgrade -f
+backups:
+	@sh "$(DOTFILES_DIR)/scripts/links.sh" backups
 
-stow-macos: brew
-	is-executable stow || brew install stow
+# Replace every symlink of $HOME (top level) and $XDG_CONFIG_HOME (recursive) that
+# points into this repo with a copy of its content, except ~/.dotfiles itself.
+# The copied ~/.zshrc still sources ~/.dotfiles/shell/init.zsh.
+detach:
+	@repo=$$(cd "$(DOTFILES_DIR)" && pwd -P); \
+	{ find "$(HOME)" -mindepth 1 -maxdepth 1 -type l; find "$(XDG_CONFIG_HOME)" -type l 2>/dev/null; } | \
+	{ n=0; \
+	while IFS= read -r link; do \
+		[ "$$link" = "$(HOME)/.dotfiles" ] && continue; \
+		target=$$(readlink -f "$$link" 2>/dev/null) || continue; \
+		case "$$target" in "$$repo"/*) ;; *) continue ;; esac; \
+		unlink "$$link" && cp -R "$$target" "$$link" && n=$$((n + 1)) && echo "  copied $$link  (was -> $$target)"; \
+	done; \
+	echo "$$n symlink(s) replaced by copies."; }
 
-stow-linux: core-linux
-	is-executable stow || apt-get -y install stow
-
-sudo:
-	sudo -v
-	while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
-
-packages: mas brew-packages node-packages gems ohmyzsh
-
-link: stow-$(OS)
-	for FILE in $$(\ls -A run); do if [ -f $(HOME)/$$FILE -a ! -h $(HOME)/$$FILE ]; then mv -v $(HOME)/$$FILE{,.bak}; fi; done
-	mkdir -p $(XDG_CONFIG_HOME)
-	stow -t $(HOME) run
-	stow -t $(XDG_CONFIG_HOME) config
-
-unlink: stow-$(OS)
-	stow --delete -t $(HOME) run
-	stow --delete -t $(XDG_CONFIG_HOME) config
-	for FILE in $$(\ls -A run); do if [ -f $(HOME)/$$FILE.bak ]; then mv -v $(HOME)/$$FILE.bak $(HOME)/$${FILE%%.bak}; fi; done
-
+# Formulae, apps, fonts and App Store apps; then the private custom/Brewfile
 brew:
-	echo >> "/Users/$(whoami)/.zprofile"
-	echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> "/Users/$(whoami)/.zprofile"
-	eval "$(/opt/homebrew/bin/brew shellenv)"
-	is-executable brew || /bin/bash -c "$$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+	brew bundle --file="$(DOTFILES_DIR)/Brewfile"
+	@if [ -f "$(DOTFILES_DIR)/custom/Brewfile" ]; then brew bundle --file="$(DOTFILES_DIR)/custom/Brewfile"; fi
 
+# Command-line tools and runtimes (config/mise/config.toml, linked by `make link`)
+mise:
+	@command -v mise >/dev/null 2>&1 || curl -fsSL https://mise.run | sh
+	mise trust "$(DOTFILES_DIR)/mise.toml"
+	cd "$(DOTFILES_DIR)" && mise install
+	@$(MAKE) --no-print-directory docker-plugins
 
-git: brew
-	brew install git git-extras
+# Docker without Docker Desktop: compose and buildx plugins point to mise shims
+# (stable paths across updates), dead links to Docker.app go, and `docker login`
+# stores credentials in the macOS keychain.
+.PHONY: docker-plugins
+docker-plugins:
+	@plugins="$(HOME)/.docker/cli-plugins"; shims="$(HOME)/.local/share/mise/shims"; \
+	mkdir -p "$$plugins"; \
+	for p in docker-compose docker-buildx; do \
+		if [ -x "$$shims/$$p" ]; then ln -sfn "$$shims/$$p" "$$plugins/$$p"; fi; \
+	done; \
+	for link in "$$plugins"/*; do \
+		if [ -L "$$link" ] && [ ! -e "$$link" ]; then unlink "$$link" && echo "  removed dead plugin link $$link"; fi; \
+	done; \
+	config="$(HOME)/.docker/config.json"; \
+	if [ "$(OS)" = Darwin ] && [ -f "$$config" ] && [ "$$(jq -r '.credsStore // empty' "$$config")" = desktop ]; then \
+		jq '.credsStore = "osxkeychain"' "$$config" >"$$config.tmp" && mv "$$config.tmp" "$$config" && echo "  docker credsStore: desktop -> osxkeychain"; \
+	fi
 
-pnpm:
-	brew install pnpm
+# Apps without a Homebrew cask, from their GitHub releases (bin/install-dmg-app)
+ifeq ($(ARCH),arm64)
+ORCA_DMG := orca-macos-arm64\.dmg$$
+else
+ORCA_DMG := orca-macos-x64\.dmg$$
+endif
+apps:
+	@install-dmg-app tonyantony300/dashbeam '_universal\.dmg$$' DashBeam.app
+	@install-dmg-app erictli/scratch '_universal\.dmg$$' Scratch.app
+	@install-dmg-app stablyai/orca '$(ORCA_DMG)' Orca.app
 
-node:
-	curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
-	. $(NVM_DIR)/nvm.sh; nvm install --lts
-
-bun:
-	curl -fsSL https://bun.sh/install | bash
-
-ruby: brew
-	brew install ruby rbenv
-	rbenv init
-
-mas:
-	brew install mas
-
-brew-packages: brew
-	brew bundle --file=$(DOTFILES_DIR)/Brewfile
-	# Install brews that cannot be installed via a Brewfile (see https://github.com/Homebrew/homebrew-bundle/#note)
-	# brew cask install https://raw.githubusercontent.com/popcorn-official/popcorn-desktop/development/casks/popcorn-time.rb
-
-node-packages: node bun
-	. $(NVM_DIR)/nvm.sh; pnpm add -g $(shell cat npmfile)
-
-gems: ruby
-	export PATH="/usr/local/opt/ruby/bin:$(PATH)"; sudo gem install $(shell cat Gemfile)
-
+# oh-my-zsh, keeping our ~/.zshrc and without starting a new zsh
 ohmyzsh:
-	-curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh | bash
-	git clone https://github.com/spaceship-prompt/spaceship-prompt.git "$(XDG_CONFIG_HOME)/oh-my-zsh/themes/spaceship-prompt" --depth=1 || echo "spaceship-prompt directory already exists"
-	mkdir -p "$(HOME)/.oh-my-zsh/themes"; ln -s "$(XDG_CONFIG_HOME)/oh-my-zsh/themes/spaceship-prompt/spaceship.zsh-theme" "$(HOME)/.oh-my-zsh/themes"  || echo "could not link spaceship-prompt theme file"
+	@if [ ! -d "$(HOME)/.oh-my-zsh" ]; then \
+		RUNZSH=no CHSH=no KEEP_ZSHRC=yes sh -c "$$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"; \
+	fi
+
+# Run the install wizard again from this clone
+setup:
+	@sh "$(DOTFILES_DIR)/install.sh"
+
+# Ask the wizard's questions and show what it would write and run, changing nothing
+setup-dry:
+	@sh "$(DOTFILES_DIR)/install.sh" --dry-run
 
 workdirs:
-	mkdir -p "$(XDG_CONFIG_HOME)"
-	mkdir -p "$(HOME)/dev"
-	mkdir -p "$(HOME)/work"
+	@if [ -r "$(DOTFILES_DIR)/custom/dotfiles.env" ]; then . "$(DOTFILES_DIR)/custom/dotfiles.env"; fi; \
+	mkdir -p "$${DEV_DIR:-$(HOME)/dev}" "$${WORK_DIR:-$(HOME)/work}"
+
+# macOS defaults (opt-in). Read macos/defaults.sh first.
+macos:
+	@if [ -r "$(DOTFILES_DIR)/custom/dotfiles.env" ]; then . "$(DOTFILES_DIR)/custom/dotfiles.env"; fi; \
+	COMPUTER_NAME="$${COMPUTER_NAME:-}" bash "$(DOTFILES_DIR)/macos/defaults.sh"
+
+# `make test`, or one file: `make test T=test/functions/gwtaa.bats`
+T ?= -r test
+test:
+	@command -v zsh >/dev/null 2>&1 || { echo "make test: zsh is required (brew install zsh / apt-get install zsh)" >&2; exit 1; }
+	@command -v bats >/dev/null 2>&1 || { echo "make test: bats is missing, run: mise install" >&2; exit 1; }
+	bats --timing --print-output-on-failure $(T)
+
+SH_SCRIPTS := install.sh scripts/links.sh
+BASH_SCRIPTS := bin/editor bin/install-dmg-app bin/is-executable bin/is-macos bin/is-supported macos/defaults.sh shell/init.bash shell/path.sh shell/exports.sh shell/aliases.sh
+ZSH_FILES := shell/init.zsh $(wildcard shell/functions/*.zsh) home/.zshrc home/.zprofile home/.zshenv
+lint:
+	@cd "$(DOTFILES_DIR)" && \
+	shellcheck -s sh $(SH_SCRIPTS) && echo "shellcheck (sh) on $(words $(SH_SCRIPTS)) files: OK" && \
+	shellcheck -s bash $(BASH_SCRIPTS) && echo "shellcheck (bash) on $(words $(BASH_SCRIPTS)) files: OK" && \
+	for f in $(ZSH_FILES); do zsh -n "$$f" || exit 1; done && echo "zsh -n on $(words $(ZSH_FILES)) files: OK"

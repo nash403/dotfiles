@@ -1,16 +1,18 @@
 #!/usr/bin/env bash
+# Open a file with the app that suits its type, or nano when that app is not
+# installed. Used by the `e` alias; $EDITOR stays nano.
+
+# open_with APP [ARGS...] FILE
+open_with() {
+  if command -v "$1" >/dev/null 2>&1; then
+    "$@"
+  else
+    nano "${@: -1}"
+  fi
+}
 
 case "$1" in
-	*_EDITMSG|*MERGE_MSG|*_TAGMSG )
-		zed --wait "$1"
-		;;
-	*.md )
-		scratch "$1"
-		;;
-	*.txt )
-		nano "$1"
-		;;
-	* )
-		code -n "$1"
-		;;
+  *.md) open_with scratch "$1" ;;
+  *.txt) nano "$1" ;;
+  *) open_with code -n "$1" ;;
 esac
