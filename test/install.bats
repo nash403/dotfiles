@@ -215,7 +215,8 @@ answers() {
   for dir in /usr/bin /bin; do
     for cmd in "$dir"/*; do
       name=${cmd##*/}
-      [ "$name" = zsh ] || [ -e "$sysbin/$name" ] || ln -s "$cmd" "$sysbin/$name"
+      # -L too: a dangling link already there is not "-e" (Ubuntu's /bin is /usr/bin)
+      [ "$name" = zsh ] || [ -e "$sysbin/$name" ] || [ -L "$sysbin/$name" ] || ln -s "$cmd" "$sysbin/$name"
     done
   done
   install DOTFILES_YES=1 PATH="$BATS_TEST_TMPDIR/stubs:$sysbin"
