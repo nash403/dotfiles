@@ -1,8 +1,13 @@
 name: ci-macos
 
+# Once per change: pull requests run the checks on their own; push only covers
+# master (its badge in the README) so a branch with an open PR is not checked
+# twice. Any branch can be checked by hand from the Actions tab.
 on:
   push:
+    branches: [master]
   pull_request:
+  workflow_dispatch:
 
 jobs:
   checks:

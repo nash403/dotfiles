@@ -80,3 +80,31 @@ jobs:
           check "SSH step skipped" '[ ! -e "$CI_HOME/.ssh" ]'
           check "machine name not written" '! grep -q COMPUTER_NAME "$env_file"'
           exit "$failed"
+
+      # A real Ubuntu, for what the bats tests can only fake: hostnamectl and
+      # /etc/hosts. The unattended install above skips the machine name, so the
+      # wizard runs interactively here, its answers read from a file.
+      - name: Machine name on a real Ubuntu
+        if: runner.os == 'Linux'
+        run: |
+          answers=$(mktemp)
+          #                      ready chsh clone dev work name email machine         create recap make
+          printf '%s\n' "" n "" "" "" "" "" "CI Wizard Box" n y n >"$answers"
+          wizard_home=$(mktemp -d)
+          HOME="$wizard_home" SHELL=/bin/bash DOTFILES_TTY="$answers" \
+            DOTFILES_REPO="file://$GITHUB_WORKSPACE" DOTFILES_BRANCH=ci-under-test \
+            sh <install.sh
+
+          failed=0
+          check() {
+            if eval "$2"; then line="✓ $1"; else line="✗ $1"; failed=1; fi
+            echo "$line"
+            echo "- $line" >>"$GITHUB_STEP_SUMMARY"
+          }
+          echo "### Machine name (Ubuntu)" >>"$GITHUB_STEP_SUMMARY"
+          check "hostname is CI-Wizard-Box" '[ "$(hostname)" = CI-Wizard-Box ]'
+          check "hostnamectl reports it" '[ "$(hostnamectl hostname 2>/dev/null || hostnamectl --static)" = CI-Wizard-Box ]'
+          check "/etc/hosts maps 127.0.1.1 to it" 'grep -Eq "^127\.0\.1\.1[[:space:]]+CI-Wizard-Box$" /etc/hosts'
+          check "sudo does not warn about the host" '! sudo true 2>&1 | grep -q "unable to resolve host"'
+          check "dotfiles.env keeps the name" "grep -q \"^COMPUTER_NAME='CI Wizard Box'\" \"$wizard_home/dev/dotfiles/custom/dotfiles.env\""
+          exit "$failed"

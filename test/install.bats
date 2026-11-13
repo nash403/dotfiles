@@ -277,3 +277,77 @@ answers() {
   [ "$status" -eq 1 ]
   [[ "$output" == *"Unknown option: --nope"* ]]
 }
+
+@test "interactive: the machine name defaults to the Mac's current name" {
+  #       ready clone dev work name email machine create recap make
+  answers ""    ""    ""  ""   ""   ""    ""      n      y     n
+  install DOTFILES_TTY="$BATS_TEST_TMPDIR/tty"
+  [ "$status" -eq 0 ]
+  grep -q "scutil --set ComputerName Old Name" "$LOG"
+  grep -q "scutil --set LocalHostName Old-Name" "$LOG"
+}
+
+@test "the last screen says how to sign in to gh and glab" {
+  install DOTFILES_YES=1
+  [ "$status" -eq 0 ]
+  [[ "$output" == *"gh auth login"* ]]
+  [[ "$output" == *"glab auth login    # GitLab"* ]]
+}
+
+@test "the glab sign-in targets a self-hosted GitLab" {
+  #       ready clone dev work name email machine create name sign platform url                             recap gitlab make
+  answers ""    ""    ""  ""   ""   ""    ""      y      ""   n    2        "https://gitlab.example.test/x" y     ""     n
+  install DOTFILES_TTY="$BATS_TEST_TMPDIR/tty"
+  [ "$status" -eq 0 ]
+  [[ "$output" == *"glab auth login --hostname gitlab.example.test"* ]]
+}
+
+# linux_machine: pretend to be Linux with hostnamectl, and a fake /etc/hosts
+linux_machine() {
+  stub uname '[ "$1" = -s ] && echo Linux || /usr/bin/uname "$@"'
+  stub hostname 'echo old-box'
+  stub hostnamectl "echo \"hostnamectl \$*\" >>'$LOG'"
+  stub chsh "echo \"chsh \$*\" >>'$LOG'"
+  export HOSTS_FILE="$BATS_TEST_TMPDIR/hosts"
+  printf '127.0.0.1\tlocalhost\n127.0.1.1\told-box\n::1\tip6-localhost\n' >"$HOSTS_FILE"
+}
+
+@test "Linux: the current hostname is the default, and is applied with hostnamectl" {
+  linux_machine
+  #       ready chsh clone dev work name email machine create recap make
+  answers ""    n    ""    ""  ""   ""   ""    ""      n      y     n
+  install DOTFILES_TTY="$BATS_TEST_TMPDIR/tty" SHELL=/bin/bash
+  [ "$status" -eq 0 ]
+  grep -q "hostnamectl set-hostname old-box" "$LOG"
+}
+
+@test "Linux: a new name becomes the hostname and the 127.0.1.1 entry" {
+  linux_machine
+  #       ready chsh clone dev work name email machine          create recap make
+  answers ""    n    ""    ""  ""   ""   ""    "Shusui Desktop" n      y     n
+  install DOTFILES_TTY="$BATS_TEST_TMPDIR/tty" SHELL=/bin/bash
+  [ "$status" -eq 0 ]
+  grep -q "hostnamectl set-hostname Shusui-Desktop" "$LOG"
+  grep -q "^127.0.1.1	Shusui-Desktop$" "$HOSTS_FILE"
+  grep -q "^127.0.0.1	localhost$" "$HOSTS_FILE"
+  [ ! -e "$HOSTS_FILE.bak" ]
+}
+
+@test "Linux: without a 127.0.1.1 entry, one is added" {
+  linux_machine
+  printf '127.0.0.1\tlocalhost\n' >"$HOSTS_FILE"
+  answers "" n "" "" "" "" "" "box2" n y n
+  install DOTFILES_TTY="$BATS_TEST_TMPDIR/tty" SHELL=/bin/bash
+  [ "$status" -eq 0 ]
+  [ "$(tail -1 "$HOSTS_FILE")" = "127.0.1.1	box2" ]
+}
+
+@test "Linux: without the hostname command, uname -n gives the default" {
+  linux_machine
+  stub hostname 'exit 127'
+  stub uname 'case "$1" in -s) echo Linux;; -n) echo from-uname;; *) /usr/bin/uname "$@";; esac'
+  answers "" n "" "" "" "" "" "" n y n
+  install DOTFILES_TTY="$BATS_TEST_TMPDIR/tty" SHELL=/bin/bash
+  [ "$status" -eq 0 ]
+  grep -q "hostnamectl set-hostname from-uname" "$LOG"
+}

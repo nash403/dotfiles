@@ -287,7 +287,8 @@ stage_machine() {
   if is_macos; then
     current=$(scutil --get ComputerName 2>/dev/null || true)
   else
-    current=$(hostname 2>/dev/null || true)
+    # `hostname` is missing from some minimal images; `uname -n` never is
+    current=$(hostname 2>/dev/null || uname -n 2>/dev/null || true)
   fi
   first_name=${GIT_NAME%% *}
   example="${first_name:-Alex}'s MacBook Pro"
@@ -477,6 +478,18 @@ apply_env_file() {
   ok "Answers saved in custom/dotfiles.env"
 }
 
+# set_hosts_entry NAME: the 127.0.1.1 line of /etc/hosts (HOSTS_FILE in tests)
+# names NAME; added when missing.
+set_hosts_entry() {
+  hosts=${HOSTS_FILE:-/etc/hosts}
+  tab=$(printf '\t')
+  if grep -q '^127\.0\.1\.1[[:space:]]' "$hosts" 2>/dev/null; then
+    sudo sed -i.bak "s/^127\.0\.1\.1[[:space:]].*/127.0.1.1${tab}$1/" "$hosts" && sudo rm -f "$hosts.bak"
+  else
+    printf '127.0.1.1\t%s\n' "$1" | sudo tee -a "$hosts" >/dev/null
+  fi
+}
+
 apply_machine_name() {
   [ -n "${COMPUTER_NAME:-}" ] || return 0
   if is_macos; then
@@ -489,6 +502,10 @@ apply_machine_name() {
     fi
   elif command -v hostnamectl >/dev/null 2>&1; then
     if act "sudo hostnamectl set-hostname $HOST_NAME" sudo hostnamectl set-hostname "$HOST_NAME"; then
+      # Debian/Ubuntu map the machine name to 127.0.1.1 in /etc/hosts; left on
+      # the old name, every sudo warns "unable to resolve host".
+      act "point 127.0.1.1 to $HOST_NAME in /etc/hosts" set_hosts_entry "$HOST_NAME" ||
+        warn "Update /etc/hosts by hand: 127.0.1.1 $HOST_NAME"
       ok "Machine: $HOST_NAME"
     else
       warn "Machine name not applied"
@@ -608,6 +625,7 @@ stage_next() {
   if is_dry_run; then
     say "Dry run: nothing was written and no command was run."
     say "Run again without --dry-run (or DOTFILES_DRY_RUN) to apply."
+    say_cli_logins
     return 0
   fi
   if is_macos; then
@@ -630,6 +648,21 @@ stage_next() {
   fi
   is_macos && say "  make macos                  # macOS defaults (optional, read macos/defaults.sh first)"
   say "Then open a new terminal."
+  say_cli_logins
+}
+
+# say_cli_logins: how to sign in to the GitHub and GitLab CLIs (gh and glab come
+# with `make`, through mise).
+say_cli_logins() {
+  printf '\n'
+  say "To use the GitHub and GitLab command-line tools, sign in once installed:"
+  say "  gh auth login      # GitHub"
+  gitlab_host=$(printf '%s' "${GITLAB_URL:-}" | sed -E -e 's#^https?://##' -e 's#/.*$##')
+  if [ -n "$gitlab_host" ] && [ "$gitlab_host" != gitlab.com ]; then
+    say "  glab auth login --hostname $gitlab_host      # GitLab"
+  else
+    say "  glab auth login    # GitLab"
+  fi
 }
 
 main() {
