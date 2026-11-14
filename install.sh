@@ -35,9 +35,9 @@ TOTAL_STAGES=10
 
 if [ -t 1 ] && command -v tput >/dev/null 2>&1 && [ "$(tput colors 2>/dev/null || echo 0)" -ge 8 ]; then
   BOLD=$(tput bold) DIM=$(tput dim) RESET=$(tput sgr0)
-  BLUE=$(tput setaf 4) GREEN=$(tput setaf 2) YELLOW=$(tput setaf 3) RED=$(tput setaf 1)
+  BLUE=$(tput setaf 4) GREEN=$(tput setaf 2) YELLOW=$(tput setaf 3) RED=$(tput setaf 1) CYAN=$(tput setaf 6)
 else
-  BOLD="" DIM="" RESET="" BLUE="" GREEN="" YELLOW="" RED=""
+  BOLD="" DIM="" RESET="" BLUE="" GREEN="" YELLOW="" RED="" CYAN=""
 fi
 STAGE_INDEX=0
 
@@ -82,7 +82,7 @@ ask() {
     return 0
   fi
   if [ -n "$3" ]; then
-    printf '  %s%s%s %s[%s]%s ' "$BOLD" "$2" "$RESET" "$DIM" "$3" "$RESET"
+    printf '  %s%s%s %s[%s]%s ' "$BOLD" "$2" "$RESET" "$CYAN" "$3" "$RESET"
   else
     printf '  %s%s%s ' "$BOLD" "$2" "$RESET"
   fi
@@ -143,6 +143,15 @@ expand_path() {
   esac
 }
 
+# tilde_path PATH: PATH with $HOME shown as ~, for the defaults in brackets
+tilde_path() {
+  case "$1" in
+    "$HOME") printf '~' ;;
+    "$HOME"/*) printf '~/%s' "${1#"$HOME"/}" ;;
+    *) printf '%s' "$1" ;;
+  esac
+}
+
 # shell_quote VALUE: VALUE as a sh word. Paths under $HOME keep "$HOME" so no
 # account name ends up in the file: "$HOME"'/dev'.
 shell_quote() {
@@ -156,7 +165,7 @@ single_quote() {
   printf "'%s'" "$(printf '%s' "$1" | sed "s/'/'\\\\''/g")"
 }
 
-# hostname_from NAME: letters, digits and hyphens only, 63 characters max.
+# hostname_from NAME: lowercase letters, digits and hyphens only, 63 characters max.
 hostname_from() {
   # One substitution per accented letter: bracket expressions would match single
   # bytes of these multibyte characters.
@@ -169,6 +178,7 @@ hostname_from() {
       -e 's/Ö/O/g;s/Õ/O/g;s/ú/u/g;s/ù/u/g;s/û/u/g;s/ü/u/g;s/Ú/U/g;s/Ù/U/g' \
       -e 's/Û/U/g;s/Ü/U/g;s/ý/y/g;s/ÿ/y/g;s/œ/oe/g;s/Œ/OE/g;s/æ/ae/g;s/Æ/AE/g' |
     LC_ALL=C sed -e "s/'//g" -e "s/$(printf '\342\200\231')//g" -e 's/[^A-Za-z0-9]\{1,\}/-/g' -e 's/^-//' |
+    LC_ALL=C tr '[:upper:]' '[:lower:]' |
     cut -c1-63 | sed 's/-$//'
 }
 
@@ -264,18 +274,18 @@ stage_clone_path() {
     default="$HOME/dev/dotfiles"
   fi
   say "Full path of the clone. ~/.dotfiles will point to it."
-  ask DOTFILES_DIR "Clone folder:" "${DOTFILES_DIR:-$default}"
+  ask DOTFILES_DIR "Clone folder:" "$(tilde_path "${DOTFILES_DIR:-$default}")"
   DOTFILES_DIR=$(expand_path "$DOTFILES_DIR")
 }
 
 stage_folders() {
   stage "Project folders"
   say "A bare name is created in your home folder (dev → ~/dev)."
-  ask DEV_DIR "Personal projects folder:" "${DEV_DIR:-$(env_default DEV_DIR)}"
-  [ -n "$DEV_DIR" ] || DEV_DIR="~/dev"
+  default=$(env_default DEV_DIR)
+  ask DEV_DIR "Personal projects folder:" "$(tilde_path "${DEV_DIR:-${default:-$HOME/dev}}")"
   DEV_DIR=$(expand_path "$DEV_DIR")
-  ask WORK_DIR "Work projects folder:" "${WORK_DIR:-$(env_default WORK_DIR)}"
-  [ -n "$WORK_DIR" ] || WORK_DIR="~/work"
+  default=$(env_default WORK_DIR)
+  ask WORK_DIR "Work projects folder:" "$(tilde_path "${WORK_DIR:-${default:-$HOME/work}}")"
   WORK_DIR=$(expand_path "$WORK_DIR")
 }
 
@@ -284,8 +294,10 @@ stage_backup() {
   say "make mackup-backup copies the settings of the apps listed in mackup/mackup.cfg"
   say "to a folder of your Dropbox; make mackup-restore copies them back. Nothing is"
   say "copied now: this only records the folder."
-  ask MACKUP_DIR "Folder in Dropbox:" "${MACKUP_DIR:-$(env_default MACKUP_DIR)}"
+  default=$(env_default MACKUP_DIR)
+  ask MACKUP_DIR "Folder in Dropbox:" "${MACKUP_DIR:-${default:-Mackup}}"
   MACKUP_DIR=$(dropbox_relative "$MACKUP_DIR")
+  # The Dropbox folder itself (~/Dropbox) leaves nothing: back to the default.
   [ -n "$MACKUP_DIR" ] || MACKUP_DIR=Mackup
 }
 
@@ -314,7 +326,7 @@ stage_machine() {
   first_name=${GIT_NAME%% *}
   example="${first_name:-Alex}'s MacBook Pro"
   say "The display name (Sharing, AirDrop) accepts anything, e.g. \"$example\"."
-  say "The network name is derived from it: letters, digits and hyphens, 63 characters max."
+  say "The network name is derived from it: a-z, 0-9 and hyphens, 63 characters max."
   note "Here: \"$example\" → $(hostname_from "$example")"
   while :; do
     ask COMPUTER_NAME "Machine name:" "${COMPUTER_NAME:-$current}"

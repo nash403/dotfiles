@@ -144,7 +144,7 @@ answers() {
   install DOTFILES_TTY="$BATS_TEST_TMPDIR/tty"
   [ "$status" -eq 0 ]
   grep -q "scutil --set ComputerName MacBook Pro d'Honoré" "$LOG"
-  grep -q "scutil --set LocalHostName MacBook-Pro-dHonore" "$LOG"
+  grep -q "scutil --set LocalHostName macbook-pro-dhonore" "$LOG"
   grep -q "ssh-keygen -t ed25519 -C ada@test -f $HOME/.ssh/id_ed25519" "$LOG"
   [ "$(git config --file "$HOME/.gitconfig" gpg.format)" = ssh ]
   [ "$(git config --file "$HOME/.gitconfig" user.signingkey)" = "$HOME/.ssh/id_ed25519.pub" ]
@@ -266,7 +266,7 @@ answers() {
   [ "$status" -eq 0 ]
   [ ! -s "$LOG" ]
   [[ "$output" == *"[dry run] ssh-keygen -t ed25519"* ]]
-  [[ "$output" == *"[dry run] sudo scutil --set LocalHostName Adas-Mac"* ]]
+  [[ "$output" == *"[dry run] sudo scutil --set LocalHostName adas-mac"* ]]
   [[ "$output" == *"[dry run] open https://github.com/settings/ssh/new"* ]]
   [[ "$output" == *"[dry run] git config --file ~/.gitconfig gpg.format \"ssh\""* ]]
   [ ! -e "$HOME/.ssh" ] && [ ! -e "$HOME/.gitconfig" ] && [ ! -e "$HOME/.dotfiles" ]
@@ -284,7 +284,7 @@ answers() {
   install DOTFILES_TTY="$BATS_TEST_TMPDIR/tty"
   [ "$status" -eq 0 ]
   grep -q "scutil --set ComputerName Old Name" "$LOG"
-  grep -q "scutil --set LocalHostName Old-Name" "$LOG"
+  grep -q "scutil --set LocalHostName old-name" "$LOG"
 }
 
 @test "the last screen says how to sign in to gh and glab" {
@@ -327,8 +327,8 @@ linux_machine() {
   answers ""    n    ""    ""  ""   ""     ""   ""    "Shusui Desktop" n      y     n
   install DOTFILES_TTY="$BATS_TEST_TMPDIR/tty" SHELL=/bin/bash
   [ "$status" -eq 0 ]
-  grep -q "hostnamectl set-hostname Shusui-Desktop" "$LOG"
-  grep -q "^127.0.1.1	Shusui-Desktop$" "$HOSTS_FILE"
+  grep -q "hostnamectl set-hostname shusui-desktop" "$LOG"
+  grep -q "^127.0.1.1	shusui-desktop$" "$HOSTS_FILE"
   grep -q "^127.0.0.1	localhost$" "$HOSTS_FILE"
   [ ! -e "$HOSTS_FILE.bak" ]
 }
@@ -391,4 +391,16 @@ linux_machine() {
   answers "" "" "" "" "" "" "" "" n y n
   install DOTFILES_TTY="$BATS_TEST_TMPDIR/tty"
   grep -qx "MACKUP_DIR='Sauvegardes'" "$HOME/dev/dotfiles/custom/dotfiles.env"
+}
+
+@test "interactive: the defaults are shown in brackets on a first run" {
+  #       ready clone dev work backup name email machine create recap make
+  answers ""    ""    ""  ""   ""     ""   ""    ""      n      y     n
+  install DOTFILES_TTY="$BATS_TEST_TMPDIR/tty"
+  [ "$status" -eq 0 ]
+  [[ "$output" == *"Clone folder: [~/dev/dotfiles]"* ]]
+  [[ "$output" == *"Personal projects folder: [~/dev]"* ]]
+  [[ "$output" == *"Work projects folder: [~/work]"* ]]
+  [[ "$output" == *"Folder in Dropbox: [Mackup]"* ]]
+  [ -d "$HOME/dev" ] && [ -d "$HOME/work" ]
 }
