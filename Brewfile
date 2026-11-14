@@ -38,11 +38,11 @@ if OS.mac?
   # cask 'popcorn-time'
 
   # Apps
-  cask 'adapter'               # convert video, audio and images
   cask 'adobe-acrobat-reader'  # PDF reader
   cask 'aerial'                # Apple TV screensaver
   cask 'airflow'               # stream videos to Apple TV / Chromecast
   cask 'alfred'                # launcher and workflows
+  cask 'appcleaner'            # uninstall apps with their leftover files
   cask 'apparency'             # inspect app bundles
   cask 'background-music'      # per-app volume, system audio recording
   cask 'betterzip'             # create and edit archives
@@ -60,18 +60,22 @@ if OS.mac?
   cask 'firefox'               # browser
   cask 'ghostty'               # terminal
   cask 'google-chrome'         # browser
+  cask 'hazel'                 # automate file organization with rules
   cask 'imageoptim'            # compress images
   cask 'insomnia'              # HTTP/GraphQL client
   cask 'linear'                # issue tracking
   cask 'mole-app'              # clean up and monitor the Mac
   cask 'ngrok'                 # expose a local port
   cask 'notion'                # notes and docs
+  cask 'omnidisksweeper'       # find what fills the disk
   cask 'opencode-desktop'      # opencode desktop client
   cask 'orbstack'              # VM running the Docker engine (alternative to colima)
+  cask 'protonvpn'             # VPN
   cask 'slack'                 # team chat
   cask 'superwhisper'          # dictation with AI rewording
   cask 'suspicious-package'    # inspect .pkg installers
   cask 'the-unarchiver'        # extract archives
+  cask 'transmission'          # BitTorrent client
   cask 'visual-studio-code'    # editor
   cask 'vlc'                   # media player
   cask 'whatsapp'              # messaging
