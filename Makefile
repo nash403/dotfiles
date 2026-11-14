@@ -23,10 +23,19 @@ help: ## Show this help
 ##@ Install
 
 ifeq ($(OS),Darwin)
-all: homebrew link brew mise apps ohmyzsh ## Install everything (default target)
+all: sudo-keepalive homebrew link brew mise apps ohmyzsh ## Install everything (default target)
 else
-all: homebrew link brew mise ohmyzsh
+all: sudo-keepalive homebrew link brew mise ohmyzsh
 endif
+
+# Asks for the sudo password once, then keeps it valid until make exits:
+# brew casks and mas need it long after the start.
+.PHONY: sudo-keepalive
+sudo-keepalive:
+	@command -v sudo >/dev/null 2>&1 && [ "$$(id -u)" != 0 ] || exit 0; \
+	if [ "$${DOTFILES_YES:-}" = 1 ]; then sudo -n -v 2>/dev/null || exit 0; else sudo -v || exit 1; fi; \
+	make_pid=$$PPID; \
+	( while kill -0 "$$make_pid" 2>/dev/null; do sudo -n -v; sleep 50; done ) </dev/null >/dev/null 2>&1 &
 
 # Homebrew itself. Not NONINTERACTIVE on a terminal: it must ask for the sudo password.
 homebrew: ## Install Homebrew
