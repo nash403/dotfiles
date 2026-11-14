@@ -67,6 +67,7 @@ if OS.mac?
   cask 'ngrok'                 # expose a local port
   cask 'notion'                # notes and docs
   cask 'opencode-desktop'      # opencode desktop client
+  cask 'orbstack'              # VM running the Docker engine (alternative to colima)
   cask 'slack'                 # team chat
   cask 'superwhisper'          # dictation with AI rewording
   cask 'suspicious-package'    # inspect .pkg installers
