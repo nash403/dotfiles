@@ -58,6 +58,46 @@ setup() {
   [ -L "$HOME/.unrelated" ]
 }
 
+@test "link replaces the links of a clone that was moved, without .bak" {
+  old="$BATS_TEST_TMPDIR/dev/dotfiles"
+  mkdir -p "$XDG_CONFIG_HOME/git"
+  ln -s "$old/home/.zshrc" "$HOME/.zshrc"
+  ln -s "$old/config/git/config" "$XDG_CONFIG_HOME/git/config"
+  ln -s "$old/home/.gone" "$HOME/.gone"
+  ln -s /nowhere/home/.other "$HOME/.unrelated"
+  run sh "$L" link
+  [ "$status" -eq 0 ]
+  [ "$(readlink -f "$HOME/.zshrc")" = "$REPO/home/.zshrc" ]
+  [ "$(readlink -f "$XDG_CONFIG_HOME/git/config")" = "$REPO/config/git/config" ]
+  [ ! -L "$HOME/.gone" ]
+  [ -L "$HOME/.unrelated" ]
+  [ -z "$(find "$HOME" -name '*.bak*')" ]
+  [[ "$output" == *"removed old clone link"*".zshrc"* ]]
+  [[ "$output" != *"moved aside"* ]]
+}
+
+@test "link takes over the links of another clone of the dotfiles" {
+  other="$BATS_TEST_TMPDIR/other"
+  mkdir -p "$other/scripts" "$other/home"
+  : >"$other/scripts/links.sh"
+  echo zshrc >"$other/home/.zshrc"
+  ln -s "$other/home/.zshrc" "$HOME/.zshrc"
+  run sh "$L" link
+  [ "$status" -eq 0 ]
+  [ "$(readlink -f "$HOME/.zshrc")" = "$REPO/home/.zshrc" ]
+  [ ! -e "$HOME/.zshrc.bak" ] && [ ! -L "$HOME/.zshrc.bak" ]
+}
+
+@test "link moves aside a live link of the same shape outside a dotfiles clone" {
+  mkdir -p "$BATS_TEST_TMPDIR/elsewhere/home"
+  echo theirs >"$BATS_TEST_TMPDIR/elsewhere/home/.nanorc"
+  ln -s "$BATS_TEST_TMPDIR/elsewhere/home/.nanorc" "$HOME/.nanorc"
+  run sh "$L" link
+  [ "$status" -eq 0 ]
+  [ -L "$HOME/.nanorc.bak" ]
+  [ "$(readlink -f "$HOME/.nanorc")" = "$REPO/home/.nanorc" ]
+}
+
 @test "link replaces a folder symlink into the repo with real folders" {
   mkdir -p "$XDG_CONFIG_HOME"
   ln -s "$REPO/config/git" "$XDG_CONFIG_HOME/git"
@@ -108,6 +148,14 @@ setup() {
   run sh "$L" backups
   [[ "$output" == *"code --diff ~/.zshrc.bak ~/.zshrc"* ]]
   [[ "$output" == *"~/.zshrc.bak.20200101-000000"* ]]
+}
+
+@test "backups lists a .bak that is a broken link" {
+  ln -s /nowhere/.zshrc "$HOME/.zshrc.bak"
+  run sh "$L" backups
+  [ "$status" -eq 0 ]
+  [[ "$output" == *"rm ~/.zshrc.bak"*"broken link"* ]]
+  [[ "$output" != *"No .bak file"* ]]
 }
 
 @test "backups says so when there is nothing to sort" {

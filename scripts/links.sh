@@ -3,7 +3,8 @@
 #
 #   links.sh link     home/* -> ~, config/* -> ~/.config, one symlink per file
 #                     (never a folder symlink); real files in the way are moved
-#                     to X.bak, or X.bak.<date> when X.bak exists
+#                     to X.bak, or X.bak.<date> when X.bak exists; links left by
+#                     a clone that was moved or by another clone are replaced
 #   links.sh unlink   remove those symlinks; put X.bak back, else a copy of the
 #                     repo file so the shell keeps working
 #   links.sh backups  list the .bak files left to sort, with a diff command
@@ -61,6 +62,33 @@ points_into_repo() {
   esac
 }
 
+# old_clone_link LINK: true when LINK was made by this script from another
+# clone: it points to <clone>/home/<rel> for ~/<rel> (config/ for ~/.config,
+# custom/mise.toml for mise's custom.toml), and that target is gone (the clone
+# was moved) or <clone> is a clone of these dotfiles.
+old_clone_link() {
+  target=$(readlink "$1")
+  case "$target" in /*) ;; *) target="$(dirname "$1")/$target" ;; esac
+  target=$(normalize "$target")
+  case "$1" in
+    "$CONFIG_HOME/mise/conf.d/custom.toml") suffix=/custom/mise.toml ;;
+    "$CONFIG_HOME"/*) suffix="/config/${1#"$CONFIG_HOME"/}" ;;
+    "$HOME"/*) suffix="/home/${1#"$HOME"/}" ;;
+    *) return 1 ;;
+  esac
+  case "$target" in *"$suffix") ;; *) return 1 ;; esac
+  root=${target%"$suffix"}
+  [ -n "$root" ] && [ "$root" != "$REPO" ] || return 1
+  [ ! -e "$target" ] || [ -f "$root/scripts/links.sh" ]
+}
+
+# remove_old_clone_link LINK: remove it, saying where it pointed.
+remove_old_clone_link() {
+  was=$(readlink "$1")
+  rm -f "$1"
+  echo "  removed old clone link $(tilde "$1") (was -> $(tilde "$was"))"
+}
+
 # backup FILE: move FILE aside without ever overwriting a previous backup.
 backup() {
   bak="$1.bak"
@@ -69,16 +97,20 @@ backup() {
   printf '%s\t%s\n' "$(tilde "$1")" "$(tilde "$bak")" >>"$BACKUP_LOG"
 }
 
-# Broken symlinks into the repo, left by an older layout (e.g. run/.zshrc).
+# Broken symlinks into the repo, left by an older layout (e.g. run/.zshrc), and
+# those left by a clone that was moved.
 prune_broken_links() {
   {
     find "$HOME" -mindepth 1 -maxdepth 1 -type l
     [ -d "$CONFIG_HOME" ] && find "$CONFIG_HOME" -type l
   } | while IFS= read -r link; do
     [ "$link" = "$HOME/.dotfiles" ] && continue
-    if [ ! -e "$link" ] && points_into_repo "$link"; then
+    [ -e "$link" ] && continue
+    if points_into_repo "$link"; then
       rm -f "$link"
       echo "  removed broken link $(tilde "$link")"
+    elif old_clone_link "$link"; then
+      remove_old_clone_link "$link"
     fi
   done
 }
@@ -103,7 +135,13 @@ link() {
     unfold "$dest"
     if [ -L "$dest" ]; then
       [ "$(readlink "$dest")" = "$src" ] && continue
-      if points_into_repo "$dest"; then rm -f "$dest"; else backup "$dest"; fi
+      if points_into_repo "$dest"; then
+        rm -f "$dest"
+      elif old_clone_link "$dest"; then
+        remove_old_clone_link "$dest"
+      else
+        backup "$dest"
+      fi
     elif [ -e "$dest" ]; then
       backup "$dest"
     fi
@@ -152,9 +190,14 @@ backups() {
   package_files | cut -f2 | {
     while IFS= read -r dest; do
       for bak in "$dest".bak "$dest".bak.*; do
-        [ -e "$bak" ] || continue
+        if [ -e "$bak" ]; then
+          echo "  code --diff $(tilde "$bak") $(tilde "$dest")"
+        elif [ -L "$bak" ]; then
+          echo "  rm $(tilde "$bak")    # broken link"
+        else
+          continue
+        fi
         found=1
-        echo "  code --diff $(tilde "$bak") $(tilde "$dest")"
       done
     done
     for bak in "$HOME/.gitconfig.bak" "$HOME"/.gitconfig.bak.*; do

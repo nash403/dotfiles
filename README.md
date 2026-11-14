@@ -144,6 +144,28 @@ A real file where a symlink should go is moved to `X.bak` (or `X.bak.<date>` whe
 3. `git diff` in the repo shows what you added. Commit what applies to every machine.
 4. Delete the `.bak`.
 
+A symlink left by another clone of these dotfiles, or by this one before it moved, is not moved aside: `make link` replaces it and prints where it pointed.
+
+## Move the clone
+
+Move the folder, then run the wizard and `make link` from the new place. Stay in the same terminal until the end: until `make link`, `~/.zshrc` points to the old place.
+
+```bash
+mv ~/dev ~/perso # ~/dev is the default DEV_DIR
+```
+
+```bash
+cd ~/perso/dotfiles && make setup
+```
+
+```bash
+make link
+```
+
+The wizard offers the new place as the clone folder and points `~/.dotfiles` to it. If the project folder moved too, type its new path: the default is the old one. `make link` then replaces the symlinks that pointed to the old place. Run `mise trust mise.toml` once too.
+
+Don't type the new path in `make setup` without moving the folder first: the wizard would clone a fresh copy there, without your `custom/` files or your unpushed commits.
+
 ## SSH keys
 
 [SSH_KEYS.md](./SSH_KEYS.md) explains how to create a key, add it to GitHub or GitLab, sign your commits, and use separate keys for personal and work accounts.
