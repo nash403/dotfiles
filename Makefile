@@ -88,11 +88,12 @@ xcode-license:
 	if /usr/bin/xcrun --find clang 2>&1 | grep -q license; then sudo xcodebuild -license accept; fi; \
 	"$$xcb" -checkFirstLaunchStatus || sudo "$$xcb" -runFirstLaunch
 
-# Command-line tools and runtimes (config/mise/config.toml, linked by `make link`)
+# Command-line tools and runtimes (config/mise/config.toml, linked by `make link`).
+# Python first: some installer would otherwise find the system's old python3.
 mise: ## Install the CLI tools and runtimes with mise
 	@command -v mise >/dev/null 2>&1 || curl -fsSL https://mise.run | sh
 	mise trust "$(DOTFILES_DIR)/mise.toml"
-	cd "$(DOTFILES_DIR)" && mise install
+	cd "$(DOTFILES_DIR)" && mise install python && mise install
 	@$(MAKE) --no-print-directory docker-plugins
 
 # Docker without Docker Desktop: compose and buildx plugins point to mise shims
