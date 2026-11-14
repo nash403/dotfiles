@@ -28,9 +28,12 @@ else
 all: homebrew link brew mise ohmyzsh
 endif
 
-# Homebrew itself
+# Homebrew itself. Not NONINTERACTIVE on a terminal: it must ask for the sudo password.
 homebrew: ## Install Homebrew
-	@command -v brew >/dev/null 2>&1 || NONINTERACTIVE=1 /bin/bash -c "$$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+	@command -v brew >/dev/null 2>&1 && exit 0; \
+	if [ "$${DOTFILES_YES:-}" = 1 ]; then export NONINTERACTIVE=1; fi; \
+	/bin/bash -c "$$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" || { \
+		echo "make homebrew: on \"Insufficient permissions\", run make from a terminal, as an administrator, without DOTFILES_YES." >&2; exit 1; }
 
 ##@ Symlinks
 
