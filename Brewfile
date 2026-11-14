@@ -48,6 +48,7 @@ if OS.mac?
   cask 'betterzip'             # create and edit archives
   cask 'calibre'               # e-book library
   cask 'cardinal-search'       # fast file search
+  cask 'claude'                # Claude desktop app
   cask 'cryptomator'           # encrypt cloud files
   cask 'cyberduck'             # FTP/SFTP/S3 browser
   cask 'dash'                  # offline API docs
