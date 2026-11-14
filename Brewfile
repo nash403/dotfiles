@@ -52,7 +52,7 @@ if OS.mac?
   cask 'cyberduck'             # FTP/SFTP/S3 browser
   cask 'dash'                  # offline API docs
   cask 'discord'               # chat
-  cask 'droiddock'             # Android device manager
+  cask 'rajivm1991/droiddock/droiddock', trusted: true  # Android device manager
   cask 'dropbox'               # cloud storage
   cask 'enpass'                # password manager
   cask 'ferdium'               # all messaging apps in one window
@@ -91,7 +91,6 @@ if OS.mac?
 
   # App Store (sign in to the App Store app first)
   mas 'Amphetamine', id: 937984704      # keep the Mac awake
-  mas 'Color Juicer', id: 1191209926    # color picker
   mas 'Color Picker', id: 1545870783    # color picker
   mas 'Dato', id: 1470584107            # calendar in the menu bar
   mas 'Goodnotes', id: 1444383602       # handwritten notes
