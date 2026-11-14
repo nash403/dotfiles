@@ -120,10 +120,12 @@ ORCA_DMG := orca-macos-arm64\.dmg$$
 else
 ORCA_DMG := orca-macos-x64\.dmg$$
 endif
+# By path: Apple's make looks bare commands up in the caller's PATH, not the exported one.
+INSTALL_DMG_APP := "$(DOTFILES_DIR)/bin/install-dmg-app"
 apps: ## Install the apps without a Homebrew cask (macOS only)
-	@install-dmg-app tonyantony300/dashbeam '_universal\.dmg$$' DashBeam.app
-	@install-dmg-app erictli/scratch '_universal\.dmg$$' Scratch.app
-	@install-dmg-app stablyai/orca '$(ORCA_DMG)' Orca.app
+	@$(INSTALL_DMG_APP) tonyantony300/dashbeam '_universal\.dmg$$' DashBeam.app
+	@$(INSTALL_DMG_APP) erictli/scratch '_universal\.dmg$$' Scratch.app
+	@$(INSTALL_DMG_APP) stablyai/orca '$(ORCA_DMG)' Orca.app
 
 # oh-my-zsh, keeping our ~/.zshrc and without starting a new zsh
 ohmyzsh: ## Install oh-my-zsh, keeping ~/.zshrc
