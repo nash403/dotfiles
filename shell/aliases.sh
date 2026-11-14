@@ -224,8 +224,9 @@ alias e="editor"
 # AI tools
 ###############################################################################
 
-# Claude Code with the separate work configuration
+# Claude Code with a separate configuration
 alias claude-work='CLAUDE_CONFIG_DIR="$HOME/.claude-work" claude'
+alias claude-perso='CLAUDE_CONFIG_DIR="$HOME/.claude-perso" claude'
 
 ###############################################################################
 # Media
