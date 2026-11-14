@@ -234,6 +234,7 @@ stage_checks() {
     xcode-select --install
 then run this command again."
     ok "macOS, Xcode Command Line Tools installed"
+    check_xcode_license
     return
   fi
 
@@ -261,6 +262,17 @@ then run this command again."
   ZSH_PATH=$(command -v zsh || echo /usr/bin/zsh)
   if ! is_yes_mode && [ "${SHELL:-}" != "$ZSH_PATH" ] && confirm "Make zsh your default shell?" y; then
     act "chsh -s $ZSH_PATH" chsh -s "$ZSH_PATH" || warn "chsh failed, run it by hand: chsh -s $ZSH_PATH"
+  fi
+}
+
+# An installed Xcode whose license is not accepted blocks git, make and brew.
+check_xcode_license() {
+  xcrun --find clang 2>&1 | grep -q license || return 0
+  if ! is_yes_mode && confirm "The Xcode license is not accepted: git, make and brew are blocked until it is. Accept it now?" y; then
+    act "sudo xcodebuild -license accept" sudo xcodebuild -license accept || die "License not accepted. Run: sudo xcodebuild -license accept"
+    ok "Xcode license accepted"
+  else
+    die "Accept the Xcode license first: sudo xcodebuild -license accept"
   fi
 }
 
@@ -742,8 +754,8 @@ main() {
     is_dry_run && title="dotfiles · install (dry run: nothing will be changed)"
     printf '\n%s%s  %s%s\n\n' "$BOLD" "$BLUE" "$title" "$RESET"
     say "A few questions (Enter keeps the value in brackets), a summary, then the"
-    say "install. Ctrl-C to stop: nothing changes before the summary (except, on"
-    say "Linux, missing tools and the default shell, once you agree)."
+    say "install. Ctrl-C to stop: nothing changes before the summary (except, once"
+    say "you agree, the Xcode license on macOS, missing tools and the shell on Linux)."
     pause "Ready?"
   fi
 

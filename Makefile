@@ -73,10 +73,20 @@ detach: ## Replace the symlinks with copies
 
 ##@ Packages and apps
 
-# Formulae, apps, fonts and App Store apps; then the private custom/Brewfile
+# Formulae, apps, fonts and App Store apps (Xcode last); then the private custom/Brewfile
 brew: ## Install the Brewfile, then custom/Brewfile
 	brew bundle --file="$(DOTFILES_DIR)/Brewfile"
+	@$(MAKE) --no-print-directory xcode-license
 	@if [ -f "$(DOTFILES_DIR)/custom/Brewfile" ]; then brew bundle --file="$(DOTFILES_DIR)/custom/Brewfile"; fi
+
+# Once installed, Xcode becomes the active developer folder: brew, git, clang and
+# make itself stop until its license is accepted.
+.PHONY: xcode-license
+xcode-license:
+	@xcb=/Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild; \
+	[ -x "$$xcb" ] || exit 0; \
+	if /usr/bin/xcrun --find clang 2>&1 | grep -q license; then sudo xcodebuild -license accept; fi; \
+	"$$xcb" -checkFirstLaunchStatus || sudo "$$xcb" -runFirstLaunch
 
 # Command-line tools and runtimes (config/mise/config.toml, linked by `make link`)
 mise: ## Install the CLI tools and runtimes with mise

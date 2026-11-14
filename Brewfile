@@ -95,6 +95,7 @@ if OS.mac?
   mas 'Color Picker', id: 1545870783    # color picker
   mas 'Dato', id: 1470584107            # calendar in the menu bar
   mas 'Goodnotes', id: 1444383602       # handwritten notes
-  mas 'Xcode', id: 497799835
   mas 'Zen IPTV', id: 6458223193        # IPTV player
+  # Last: once installed, brew stops until its license is accepted (make xcode-license)
+  mas 'Xcode', id: 497799835
 end

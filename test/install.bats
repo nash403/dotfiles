@@ -404,3 +404,35 @@ linux_machine() {
   [[ "$output" == *"Folder in Dropbox: [Mackup]"* ]]
   [ -d "$HOME/dev" ] && [ -d "$HOME/work" ]
 }
+
+# xcode_license_blocked: xcrun answers like an Xcode whose license is not accepted
+xcode_license_blocked() {
+  stub xcrun "echo 'You have not agreed to the Xcode license agreements.' >&2; exit 69"
+  stub xcodebuild "echo \"xcodebuild \$*\" >>'$LOG'"
+}
+
+@test "interactive: an unaccepted Xcode license is accepted once you agree" {
+  xcode_license_blocked
+  #       ready license clone dev work backup name email machine create recap make
+  answers ""    y       ""    ""  ""   ""     ""   ""    ""      n      y     n
+  install DOTFILES_TTY="$BATS_TEST_TMPDIR/tty"
+  [ "$status" -eq 0 ]
+  grep -q "xcodebuild -license accept" "$LOG"
+}
+
+@test "interactive: refusing the Xcode license stops before any change" {
+  xcode_license_blocked
+  answers "" n
+  install DOTFILES_TTY="$BATS_TEST_TMPDIR/tty"
+  [ "$status" -eq 1 ]
+  [[ "$output" == *"sudo xcodebuild -license accept"* ]]
+  [ ! -s "$LOG" ] && [ ! -e "$HOME/.dotfiles" ]
+}
+
+@test "non-interactive: an unaccepted Xcode license stops with the command to run" {
+  xcode_license_blocked
+  install DOTFILES_YES=1
+  [ "$status" -eq 1 ]
+  [[ "$output" == *"sudo xcodebuild -license accept"* ]]
+  [ ! -e "$HOME/.dotfiles" ]
+}
