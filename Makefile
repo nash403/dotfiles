@@ -1,4 +1,4 @@
-# `make` installs everything. See the README for the other targets.
+# `make` installs everything; `make help` lists the other targets.
 
 SHELL := /bin/sh
 DOTFILES_DIR := $(patsubst %/,%,$(dir $(realpath $(firstword $(MAKEFILE_LIST)))))
@@ -8,32 +8,46 @@ export PATH := /opt/homebrew/bin:/home/linuxbrew/.linuxbrew/bin:$(HOME)/.local/b
 OS := $(shell uname -s)
 ARCH := $(shell uname -m)
 
-.PHONY: all homebrew link unlink detach backups brew mise apps ohmyzsh setup setup-dry workdirs macos mackup-backup mackup-restore mackup-dry test lint
+.PHONY: help all homebrew link unlink detach backups brew mise apps ohmyzsh setup setup-dry workdirs macos mackup-backup mackup-restore mackup-dry test lint
+
+.DEFAULT_GOAL := all
+
+##@ General
+
+# Lists every target with a `## description` on its line, grouped by the `##@` headings.
+help: ## Show this help
+	@awk 'BEGIN { FS = ":.*## "; printf "\nUsage:\n  make \033[36m<target>\033[0m\n" } \
+		/^[a-zA-Z0-9_.-]+:.*## / { printf "  \033[36m%-16s\033[0m %s\n", $$1, $$2 } \
+		/^##@ / { printf "\n\033[1m%s\033[0m\n", substr($$0, 5) }' $(MAKEFILE_LIST)
+
+##@ Install
 
 ifeq ($(OS),Darwin)
-all: homebrew link brew mise apps ohmyzsh
+all: homebrew link brew mise apps ohmyzsh ## Install everything (default target)
 else
 all: homebrew link brew mise ohmyzsh
 endif
 
 # Homebrew itself
-homebrew:
+homebrew: ## Install Homebrew
 	@command -v brew >/dev/null 2>&1 || NONINTERACTIVE=1 /bin/bash -c "$$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
+##@ Symlinks
+
 # Symlinks home/ -> ~ and config/ -> ~/.config (see scripts/links.sh)
-link:
+link: ## Symlink home/ to ~ and config/ to ~/.config
 	@sh "$(DOTFILES_DIR)/scripts/links.sh" link
 
-unlink:
+unlink: ## Remove the symlinks, restore the files you had before
 	@sh "$(DOTFILES_DIR)/scripts/links.sh" unlink
 
-backups:
+backups: ## List the .bak files left to sort
 	@sh "$(DOTFILES_DIR)/scripts/links.sh" backups
 
 # Replace every symlink of $HOME (top level) and $XDG_CONFIG_HOME (recursive) that
 # points into this repo with a copy of its content, except ~/.dotfiles itself.
 # The copied ~/.zshrc still sources ~/.dotfiles/shell/init.zsh.
-detach:
+detach: ## Replace the symlinks with copies
 	@repo=$$(cd "$(DOTFILES_DIR)" && pwd -P); \
 	{ find "$(HOME)" -mindepth 1 -maxdepth 1 -type l; find "$(XDG_CONFIG_HOME)" -type l 2>/dev/null; } | \
 	{ n=0; \
@@ -45,13 +59,15 @@ detach:
 	done; \
 	echo "$$n symlink(s) replaced by copies."; }
 
+##@ Packages and apps
+
 # Formulae, apps, fonts and App Store apps; then the private custom/Brewfile
-brew:
+brew: ## Install the Brewfile, then custom/Brewfile
 	brew bundle --file="$(DOTFILES_DIR)/Brewfile"
 	@if [ -f "$(DOTFILES_DIR)/custom/Brewfile" ]; then brew bundle --file="$(DOTFILES_DIR)/custom/Brewfile"; fi
 
 # Command-line tools and runtimes (config/mise/config.toml, linked by `make link`)
-mise:
+mise: ## Install the CLI tools and runtimes with mise
 	@command -v mise >/dev/null 2>&1 || curl -fsSL https://mise.run | sh
 	mise trust "$(DOTFILES_DIR)/mise.toml"
 	cd "$(DOTFILES_DIR)" && mise install
@@ -81,50 +97,56 @@ ORCA_DMG := orca-macos-arm64\.dmg$$
 else
 ORCA_DMG := orca-macos-x64\.dmg$$
 endif
-apps:
+apps: ## Install the apps without a Homebrew cask (macOS only)
 	@install-dmg-app tonyantony300/dashbeam '_universal\.dmg$$' DashBeam.app
 	@install-dmg-app erictli/scratch '_universal\.dmg$$' Scratch.app
 	@install-dmg-app stablyai/orca '$(ORCA_DMG)' Orca.app
 
 # oh-my-zsh, keeping our ~/.zshrc and without starting a new zsh
-ohmyzsh:
+ohmyzsh: ## Install oh-my-zsh, keeping ~/.zshrc
 	@if [ ! -d "$(HOME)/.oh-my-zsh" ]; then \
 		RUNZSH=no CHSH=no KEEP_ZSHRC=yes sh -c "$$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"; \
 	fi
 
+##@ Setup
+
 # Run the install wizard again from this clone
-setup:
+setup: ## Run the install wizard again
 	@sh "$(DOTFILES_DIR)/install.sh"
 
 # Ask the wizard's questions and show what it would write and run, changing nothing
-setup-dry:
+setup-dry: ## Show what the wizard would write and run, changing nothing
 	@sh "$(DOTFILES_DIR)/install.sh" --dry-run
 
-workdirs:
+workdirs: ## Create the dev and work folders
 	@if [ -r "$(DOTFILES_DIR)/custom/dotfiles.env" ]; then . "$(DOTFILES_DIR)/custom/dotfiles.env"; fi; \
 	mkdir -p "$${DEV_DIR:-$(HOME)/dev}" "$${WORK_DIR:-$(HOME)/work}"
 
 # macOS defaults (opt-in). Read macos/defaults.sh first.
-macos:
+macos: ## Apply the macOS defaults (macOS only; read macos/defaults.sh first)
 	@if [ -r "$(DOTFILES_DIR)/custom/dotfiles.env" ]; then . "$(DOTFILES_DIR)/custom/dotfiles.env"; fi; \
 	COMPUTER_NAME="$${COMPUTER_NAME:-}" bash "$(DOTFILES_DIR)/macos/defaults.sh"
 
+##@ App settings (Mackup)
+
 # App settings <-> Dropbox folder chosen in the wizard, with Mackup (copy mode).
 # The app list is mackup/mackup.cfg; our definitions are in config/mackup/.
-mackup-backup:
+mackup-backup: ## Copy the app settings to Dropbox
 	@sh "$(DOTFILES_DIR)/scripts/mackup.sh" backup
 
 # Quit the apps first: a running app can overwrite its restored settings.
-mackup-restore:
+mackup-restore: ## Copy them back (quit the apps first)
 	@sh "$(DOTFILES_DIR)/scripts/mackup.sh" restore
 
 # What mackup-backup would copy, copying nothing
-mackup-dry:
+mackup-dry: ## Show what mackup-backup would copy
 	@sh "$(DOTFILES_DIR)/scripts/mackup.sh" dry-run
+
+##@ Checks
 
 # `make test`, or one file: `make test T=test/functions/gwtaa.bats`
 T ?= -r test
-test:
+test: ## Run the bats tests (one file: T=test/...bats)
 	@command -v zsh >/dev/null 2>&1 || { echo "make test: zsh is required (brew install zsh / apt-get install zsh)" >&2; exit 1; }
 	@command -v bats >/dev/null 2>&1 || { echo "make test: bats is missing, run: mise install" >&2; exit 1; }
 	bats --timing --print-output-on-failure $(T)
@@ -132,7 +154,7 @@ test:
 SH_SCRIPTS := install.sh scripts/links.sh scripts/mackup.sh
 BASH_SCRIPTS := bin/editor bin/install-dmg-app bin/is-executable bin/is-macos bin/is-supported macos/defaults.sh shell/init.bash shell/path.sh shell/exports.sh shell/aliases.sh
 ZSH_FILES := shell/init.zsh $(wildcard shell/functions/*.zsh) home/.zshrc home/.zprofile home/.zshenv
-lint:
+lint: ## Run shellcheck and zsh -n
 	@cd "$(DOTFILES_DIR)" && \
 	shellcheck -s sh $(SH_SCRIPTS) && echo "shellcheck (sh) on $(words $(SH_SCRIPTS)) files: OK" && \
 	shellcheck -s bash $(BASH_SCRIPTS) && echo "shellcheck (bash) on $(words $(BASH_SCRIPTS)) files: OK" && \
