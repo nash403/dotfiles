@@ -225,6 +225,7 @@ alias e="editor"
 ###############################################################################
 
 # Claude Code with a separate configuration
+alias clauded='claude --desktop'
 alias claude-work='CLAUDE_CONFIG_DIR="$HOME/.claude-work" claude'
 alias claude-perso='CLAUDE_CONFIG_DIR="$HOME/.claude-perso" claude'
 
