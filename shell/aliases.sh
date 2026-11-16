@@ -99,8 +99,6 @@ alias copy_ssh="cat ~/.ssh/id_ed25519.pub | tr -d '\n' | pbcopy && echo 'Copied 
 # System and machine info
 ###############################################################################
 
-# Get macOS Software Updates, and update package managers and their installed packages
-alias update='sudo softwareupdate -i -a; brew update; brew upgrade; brew bundle --file="$HOME/.dotfiles/Brewfile"; [ -r "$HOME/.dotfiles/custom/Brewfile" ] && brew bundle --file="$HOME/.dotfiles/custom/Brewfile"; mise self-update; mise install'
 alias reboot='sudo shutdown -r now'
 alias shutdown='sudo shutdown -h now'
 alias displays="system_profiler SPDisplaysDataType"
