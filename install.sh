@@ -368,7 +368,7 @@ stage_ssh() {
     note "you type it once. Without one, the key sits unencrypted on disk: anyone"
     note "who copies ~/.ssh can push as you."
   else
-    note "No SSH key. To do it later: SSH_KEYS.md"
+    note "No SSH key. To do it later: docs/ssh-keys.md"
     return
   fi
 
@@ -639,7 +639,7 @@ apply_ssh() {
 
   case "$SSH_PLATFORM" in github | both) add_key_github ;; esac
   case "$SSH_PLATFORM" in gitlab | both) add_key_gitlab ;; esac
-  [ "$SSH_PLATFORM" = later ] && note "To add the key later: SSH_KEYS.md"
+  [ "$SSH_PLATFORM" = later ] && note "To add the key later: docs/ssh-keys.md"
   return 0
 }
 

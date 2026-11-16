@@ -183,7 +183,7 @@ answers() {
   install DOTFILES_TTY="$BATS_TEST_TMPDIR/tty"
   [ "$status" -eq 0 ]
   [ ! -e "$HOME/.ssh/config" ]
-  [[ "$output" == *"SSH_KEYS.md"* ]]
+  [[ "$output" == *"docs/ssh-keys.md"* ]]
 }
 
 @test "interactive: GitLab on a self-hosted instance, with signing" {

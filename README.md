@@ -43,7 +43,7 @@ curl -fsSL https://raw.githubusercontent.com/nash403/dotfiles/main/install.sh | 
 
 1. where to clone the repo (default `~/dev/dotfiles`; `~/.dotfiles` always points to it),
 2. your personal and work project folders (default `~/dev` and `~/work`),
-3. the Dropbox folder for the [app settings backup](#app-settings-backup-mackup) (default `Mackup`),
+3. the Dropbox folder for the [app settings backup](#app-settings-back-up-and-restore) (default `Mackup`),
 4. your git name and email,
 5. the machine name,
 6. whether to create an SSH key, sign your commits with it, and add it to GitHub or GitLab.
@@ -81,13 +81,36 @@ cd ~/.dotfiles && make
 
 Whether the wizard ran `make` or you did, open a new terminal.
 
-Then **sign in to the Dropbox app**, which `make` just installed: the app settings backup reads and writes your Dropbox folder. On a new Mac, wait until Dropbox has synced the backup folder, quit the apps listed in [mackup/mackup.cfg](./mackup/mackup.cfg), and restore their settings:
+## App settings: back up and restore
+
+The dotfiles cover the shell and git. The settings of the apps (Alfred, Ghostty, Zed, Xcode, Superwhisper…) are copied to Dropbox by [Mackup](https://github.com/lra/mackup), in copy mode: no symlinks, which macOS no longer accepts for app preferences.
+
+- [mackup/mackup.cfg](./mackup/mackup.cfg) lists the apps to back up. Add or remove a line to change it.
+- [config/mackup/applications/](./config/mackup/applications/) holds our definitions: apps Mackup doesn't know, and replacements for Mackup definitions that copy credentials (docker, opencode, azure) or miss the current paths (k9s, lazydocker, mole).
+- The wizard asks for the folder in Dropbox (default `Mackup`, so `~/Dropbox/Mackup`) and records it in `custom/dotfiles.env`. It never backs up or restores anything itself.
+
+Every command needs the Dropbox app, which `make` installs: **sign in to it** first.
+
+### Restore, if your Dropbox already holds a backup
+
+On a new Mac, after `make`: wait until Dropbox has synced the backup folder, quit the apps listed in [mackup/mackup.cfg](./mackup/mackup.cfg) (a running app can overwrite its restored settings), then:
 
 ```bash
 make mackup-restore
 ```
 
-Optionally, apply the macOS defaults. Read [macos/defaults.sh](./macos/defaults.sh) first: it changes a lot of settings.
+### Back up
+
+```bash
+make mackup-dry       # what would be copied
+make mackup-backup    # copy the settings to Dropbox
+```
+
+Each command first writes `~/.mackup.cfg` from `mackup/mackup.cfg` and the chosen folder, so `mackup` also works on its own afterwards.
+
+## macOS settings
+
+Optional. [macos/defaults.sh](./macos/defaults.sh) sets Finder, Dock, keyboard, trackpad, screenshots, software update and more. Read it first: it changes a lot of settings. Then:
 
 ```bash
 make macos
@@ -109,7 +132,7 @@ make macos
 | `make mackup-backup` / `make mackup-restore` | Copy the app settings to Dropbox / copy them back (see below) |
 | `make mackup-dry` | Show what `make mackup-backup` would copy, copying nothing |
 | `make test` / `make lint` | Check before committing (`make test T=test/functions/gwtaa.bats` for one file) |
-| `update` (alias) | Update macOS, Homebrew (Brewfile and custom/Brewfile) and mise |
+| `update` | Update macOS, Homebrew (Brewfile and custom/Brewfile) and mise. Skips Homebrew in an account that doesn't own it |
 
 ## Your private files: `custom/`
 
@@ -117,68 +140,37 @@ make macos
 
 `custom/dotfiles.env` holds the wizard's answers. Don't edit it: run `make setup` again.
 
-## App settings backup: Mackup
-
-The dotfiles cover the shell and git. The settings of the apps (Alfred, Ghostty, Zed, Xcode, Superwhisper…) are copied to Dropbox by [Mackup](https://github.com/lra/mackup), in copy mode: no symlinks, which macOS no longer accepts for app preferences.
-
-- [mackup/mackup.cfg](./mackup/mackup.cfg) lists the apps to back up. Add or remove a line to change it.
-- [config/mackup/applications/](./config/mackup/applications/) holds our definitions: apps Mackup doesn't know, and replacements for Mackup definitions that copy credentials (docker, opencode, azure) or miss the current paths (k9s, lazydocker, mole).
-- The wizard asks for the folder in Dropbox (default `Mackup`, so `~/Dropbox/Mackup`) and records it in `custom/dotfiles.env`. It never backs up or restores anything itself.
-
-These commands need the Dropbox app signed in (`make` installs it, see [After `make`](#after-make)). Before a restore, let Dropbox finish syncing the backup folder.
-
-```bash
-make mackup-dry       # what would be copied
-make mackup-backup    # copy the settings to Dropbox
-make mackup-restore   # on a new Mac, after `make`: quit the apps first
-```
-
-Each command first writes `~/.mackup.cfg` from `mackup/mackup.cfg` and the chosen folder, so `mackup` also works on its own afterwards.
-
 ## When `make link` finds existing files
 
-A real file where a symlink should go is moved to `X.bak` (or `X.bak.<date>` when `X.bak` already exists). Nothing is overwritten. To sort them:
+On a Mac that is already set up, `make link` finds files where its symlinks go. What it does depends on what is there:
+
+| Already there | `make link` |
+|---|---|
+| A symlink to the same repo file | Leaves it |
+| A symlink into this clone, or left by another clone of these dotfiles, or by this one before it moved | Replaces it and prints where it pointed |
+| A real file | Moves it to `X.bak` |
+| Any other symlink (another dotfiles repo, a tool's own link) | Moves the link itself to `X.bak`, like a real file |
+
+`X.bak` becomes `X.bak.<date>` when `X.bak` already exists. Nothing is overwritten. To sort them:
 
 1. `make backups` lists them, each with a `code --diff X.bak X` command.
 2. The right side of that diff **is** the repo file (`~/.zshrc` is a symlink to it). Copy what you want to keep there, or into `custom/`.
 3. `git diff` in the repo shows what you added. Commit what applies to every machine.
 4. Delete the `.bak`.
 
-A symlink left by another clone of these dotfiles, or by this one before it moved, is not moved aside: `make link` replaces it and prints where it pointed.
+A `.bak` that is a symlink to a file that no longer exists shows in `make backups` as an `rm` command: there is nothing to compare.
 
-## Move the clone
+## Troubleshooting and quick reference
 
-Move the folder, then run the wizard and `make link` from the new place. Stay in the same terminal until the end: until `make link`, `~/.zshrc` points to the old place.
-
-```bash
-mv ~/dev ~/perso # ~/dev is the default DEV_DIR
-```
-
-```bash
-cd ~/perso/dotfiles && make setup
-```
-
-```bash
-make link
-```
-
-The wizard offers the new place as the clone folder and points `~/.dotfiles` to it. If the project folder moved too, type its new path: the default is the old one. `make link` then replaces the symlinks that pointed to the old place. Run `mise trust mise.toml` once too.
-
-Don't type the new path in `make setup` without moving the folder first: the wizard would clone a fresh copy there, without your `custom/` files or your unpushed commits.
-
-## SSH keys
-
-[SSH_KEYS.md](./SSH_KEYS.md) explains how to create a key, add it to GitHub or GitLab, sign your commits, and use separate keys for personal and work accounts.
+[docs/](./docs/index.md) covers the less common cases: SSH keys by hand, a second macOS account, Time Machine, moving the dotfiles folder, agentic tooling.
 
 ## Tests
 
 ```bash
-mise install
-```
-
-```bash
 make lint && make test
 ```
+
+They need bats and shellcheck, listed in [mise.toml](./mise.toml). `make` installs them; in a clone where you didn't run `make`, run `mise install` first.
 
 The tests use [bats-core](https://github.com/bats-core/bats-core). They run on macOS and Ubuntu on every push.
 
