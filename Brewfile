@@ -24,6 +24,7 @@ brew 'ngrep'                     # grep network traffic (sniff alias)
 brew 'nss'                       # lets mkcert install its CA in Firefox
 brew 'openssl@3'                 # needed to build mise's Ruby
 brew 'qrencode'                  # QR codes in the terminal (qr alias)
+brew 'rtk'                       # compresses command output for AI agents (docs/agentic-tooling.md)
 brew 'spaceship'                 # zsh prompt
 brew 'tree'                      # directory trees
 brew 'wget'                      # downloads
