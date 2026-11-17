@@ -73,11 +73,18 @@ detach: ## Replace the symlinks with copies
 
 ##@ Packages and apps
 
-# Formulae, apps, fonts and App Store apps (Xcode last); then the private custom/Brewfile
+# Formulae, apps, fonts and App Store apps (Xcode last); then the private custom/Brewfile.
+# Skipped in an account that doesn't own Homebrew: brew only works for its owner
+# (docs/multiple-accounts.md).
 brew: ## Install the Brewfile, then custom/Brewfile
-	brew bundle --file="$(DOTFILES_DIR)/Brewfile"
-	@$(MAKE) --no-print-directory xcode-license
-	@if [ -f "$(DOTFILES_DIR)/custom/Brewfile" ]; then brew bundle --file="$(DOTFILES_DIR)/custom/Brewfile"; fi
+	@owner=$$(ls -ld "$$(brew --prefix)" | awk '{ print $$3 }'); \
+	if [ "$$owner" != "$$(id -un)" ]; then \
+		echo "make brew: skipped, Homebrew belongs to $$owner (see docs/multiple-accounts.md)"; exit 0; \
+	fi; \
+	echo 'brew bundle --file="$(DOTFILES_DIR)/Brewfile"'; \
+	brew bundle --file="$(DOTFILES_DIR)/Brewfile" && \
+	$(MAKE) --no-print-directory xcode-license && \
+	if [ -f "$(DOTFILES_DIR)/custom/Brewfile" ]; then brew bundle --file="$(DOTFILES_DIR)/custom/Brewfile"; fi
 
 # Once installed, Xcode becomes the active developer folder: brew, git, clang and
 # make itself stop until its license is accepted.

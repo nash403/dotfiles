@@ -1,6 +1,6 @@
 # SSH keys
 
-What the install wizard does for you, step by step, to redo it by hand or for a second key.
+The install wizard does this for you. To redo it by hand or for a second key, here's a quick guide.
 
 ## Create a key
 
@@ -68,14 +68,14 @@ git config --file ~/.gitconfig gpg.ssh.allowedSignersFile ~/.ssh/allowed_signers
 
 Check: `git log --show-signature -1` shows `Good "git" signature`.
 
-Always pass `--file ~/.gitconfig`: without it, git may write to `~/.config/git/config`, which is a file of this repo.
+Pass `--file ~/.gitconfig`: without it, git may write to `~/.config/git/config`, which is a tracked file of this repo.
 
 ## Two accounts on the same platform
 
 Typical case: a personal GitLab account and a work one, each with its own key.
 
 1. One key per account: `id_ed25519` (personal) and `id_ed25519_work` (work), both added to their account.
-2. Recommended: switch by folder with `includeIf`. Every repo cloned under your work folder (the one you gave the wizard, see `WORK_DIR` in `custom/dotfiles.env`) then uses the work identity, without touching the clone URLs.
+2. Recommended: switch by folder with `includeIf`. Every repo cloned under your work folder then uses the work identity, without touching the clone URLs.
 
    In `~/.gitconfig`, with your work folder in place of `<WORK_DIR>` (keep the trailing `/`):
 
