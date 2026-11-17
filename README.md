@@ -55,14 +55,13 @@ It shows a summary before changing anything, then clones, writes your answers an
 <details>
 <summary>Install a fork or another branch</summary>
 
-Set `DOTFILES_REPO` or `DOTFILES_BRANCH` before `sh`:
-
 ```bash
+# Install from a fork of this repo set `DOTFILES_REPO`
 curl -fsSL https://raw.githubusercontent.com/nash403/dotfiles/main/install.sh | DOTFILES_REPO=https://github.com/you/dotfiles sh
-```
-
-```bash
+# Install from another branch set `DOTFILES_BRANCH`
 curl -fsSL https://raw.githubusercontent.com/nash403/dotfiles/next/install.sh | DOTFILES_BRANCH=next sh
+# Both
+curl -fsSL https://raw.githubusercontent.com/nash403/dotfiles/main/install.sh | DOTFILES_REPO=https://github.com/you/dotfiles DOTFILES_BRANCH=next sh
 ```
 
 </details>
@@ -77,7 +76,7 @@ cd ~/.dotfiles && make
 
 `make` installs Homebrew, links the dotfiles, installs the Brewfile (App Store apps included), the mise tools, the apps without a Homebrew cask, and oh-my-zsh.
 
-⚠️ After `make`, whether the wizard ran `make` or you did, open a new terminal/tab session. Only then do you see the config applied.
+⚠️ After `make`, whether by you or the wizard, open a new terminal/tab session. Only then do you see the config applied.
 
 <details>
 <summary>When <code>make link</code> finds existing files</summary>
