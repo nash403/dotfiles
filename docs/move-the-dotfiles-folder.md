@@ -6,17 +6,11 @@ Move the folder first, then run the wizard and `make link` from the new place. D
 
 ```bash
 mv ~/dev ~/perso # ~/dev is the default DEV_DIR
-```
-
-```bash
 cd ~/perso/dotfiles && make setup
-```
-
-```bash
 make link
 ```
 
-The wizard offers the new place as the clone folder and points `~/.dotfiles` to it. If the project folder moved too, type its new path, because the default is still the old one. `make link` then replaces the symlinks that pointed to the old place.
+The wizard offers the new place as the clone folder and points `~/.dotfiles` to it. If you also moved your personal (`DEV_DIR`) or work (`WORK_DIR`) projects folder (like ~/dev in the example), type its new path when the wizard asks: it still offers the old one. `make link` then replaces the symlinks that pointed to the old place.
 
 Run `mise trust mise.toml` once in the new place too.
 
