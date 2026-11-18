@@ -45,7 +45,7 @@ if OS.mac?
   cask 'alfred'                # launcher and workflows
   cask 'appcleaner'            # uninstall apps with their leftover files
   cask 'apparency'             # inspect app bundles
-  cask 'background-music'      # per-app volume, system audio recording
+  # cask 'background-music'      # per-app volume, system audio recording
   cask 'betterzip'             # create and edit archives
   cask 'calibre'               # e-book library
   cask 'cardinal-search'       # fast file search
