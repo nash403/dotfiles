@@ -162,7 +162,7 @@ make macos
 
 ## Troubleshooting and quick reference
 
-[docs/](./docs/index.md) covers the less common cases: SSH keys, a second macOS account, Time Machine, moving the dotfiles folder after setup (which can break symlinks), agentic tooling.
+[docs/](./docs/README.md) covers the less common cases: SSH keys, a second macOS account, Time Machine, moving the dotfiles folder after setup (which can break symlinks), agentic tooling.
 
 ## Tests
 
